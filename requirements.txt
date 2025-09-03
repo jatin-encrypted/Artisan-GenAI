@@ -1,0 +1,5 @@
+streamlit
+google-generativeai
+google-cloud-aiplatform
+Pillow
+protobuf
