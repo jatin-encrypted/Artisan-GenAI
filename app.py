@@ -98,24 +98,31 @@ translations = {
         "notify_days_label": "Notify me about events up to (days ahead)",
         "upcoming_events_info": "You have {count} upcoming event(s) matching your selected crafts (next {days} days):",
         "no_upcoming_events": "No matching events in the next {days} days.",
-        "event_when": "in {days} day(s)",
-        "event_when_ago": "{days} day(s) ago",
+        "event_when": "in {days}",
+        "event_when_ago": "{days} ago",
         "event_venue_label": "Venue:",
-        "set_reminder_button": "Set reminder for {event_id}",
-        "cancel_reminder_button": "Cancel reminder for {event_id}",
+        "set_reminder_button": "Set Reminder",
+        "cancel_reminder_button": "Cancel Reminder",
         "reminder_set_success": "Reminder set. (This is a simulation and will not send a real notification).",
         "reminder_cancelled_success": "Reminder cancelled.",
         "calendar_header": "Calendar",
         "events_list_header": "Events List & Details",
         "event_dates_label": "Dates:",
         "event_tags_label": "Tags:",
-        "starts_in_caption": "Starts in {days} day(s)",
-        "started_ago_caption": "Event started {days} day(s) ago",
+        "starts_in_caption": "Starts in {days}",
+        "started_ago_caption": "Event started {days} ago",
         "active_reminder_warning": "Reminder: '{title}' starts in {days} day(s) on {date}. Venue: {venue} — {city}",
         "no_active_reminders": "No active reminders within your reminder window.",
         "event_concluded": "Event Concluded",
         "calendar_year_label": "Year",
         "calendar_month_label": "Month",
+        "event_done": "Event Done",
+        "event_ongoing": "Event Ongoing",
+        "ended_ago_caption": "Event ended {days} ago",
+        "field_label_title": "Title",
+        "field_label_materials": "Materials",
+        "field_label_region": "Region",
+        "field_label_tone": "Tone"
     },
     "Hindi": {
         "app_title": "कलाकार एआई स्टूडियो",
@@ -138,8 +145,8 @@ translations = {
         "no_upcoming_events": "अगले {days} दिनों में कोई मेल खाने वाला कार्यक्रम नहीं है।",
         "event_when": "{days} दिन में",
         "event_when_ago": "{days} दिन पहले",
-        "set_reminder_button": "{event_id} के लिए रिमाइंडर सेट करें",
-        "cancel_reminder_button": "{event_id} के लिए रिमाइंडर रद्द करें",
+        "set_reminder_button": "रिमाइंडर सेट करें",
+        "cancel_reminder_button": "रिमाइंडर रद्द करें",
         "reminder_set_success": "रिमाइंडर सेट हो गया।",
         "reminder_cancelled_success": "रिमाइंडर रद्द किया गया।",
         "calendar_header": "कैलेंडर",
@@ -149,6 +156,13 @@ translations = {
         "starts_in_caption": "{days} दिन में शुरू होगा",
         "started_ago_caption": "कार्यक्रम {days} दिन पहले शुरू हुआ",
         "active_reminder_warning": "रिमाइंडर: '{title}' {days} दिन में {date} को शुरू होगा। स्थान: {venue} — {city}",
+        "event_done": "कार्यक्रम समाप्त",
+        "event_ongoing": "कार्यक्रम चालू",
+        "ended_ago_caption": "कार्यक्रम {days} दिन पहले समाप्त हुआ",
+        "field_label_title": "शीर्षक",
+        "field_label_materials": "सामग्री",
+        "field_label_region": "क्षेत्र",
+        "field_label_tone": "शैली / टोन"
     }
 }
 
@@ -167,12 +181,149 @@ def get_imagen_model():
 
 @st.cache_data
 def load_dummy_events() -> List[Dict[str, Any]]:
-    today = date(2025, 9, 12)
-    return [
-        {"id": "ev-001", "title": "Handmade Bazaar - Jaipur", "craft_tags": ["Terracotta clay","Ceramics","Pottery"], "start_date": today + timedelta(days=6), "end_date": today + timedelta(days=8), "venue": "Amber Grounds", "city": "Jaipur, Rajasthan", "description": "A curated fair for pottery and terracotta artisans from Rajasthan."},
-        {"id": "ev-002", "title": "Banarasi Silks Expo", "craft_tags": ["Fabric","Silk","Weaving"], "start_date": today + timedelta(days=15), "end_date": today + timedelta(days=16), "venue": "Vishwanath Conference Hall", "city": "Varanasi, Uttar Pradesh", "description": "Silk weavers showcase and buyer connect event."},
-        {"id": "ev-diwali", "title": "Diwali Crafts Mela", "craft_tags": ["All","Festive","Pottery","Fabric"], "start_date": date(2025,10,25), "end_date": date(2025,10,30), "venue": "Dilli Haat INA", "city": "New Delhi", "description": "The biggest festive market for artisans."},
+    """Return a list of richer dummy events (past, upcoming, next year).
+       NOTE: Uses a fixed 'today' = 2025-09-10 for relative offsets.
+       If your logic elsewhere assumes a different BASE today (e.g. 2025-09-13),
+       either align that constant or adjust this 'today' value.
+    """
+    today = date(2025, 9, 10)  # Fixed date to match provided screenshot logic
+    events = [
+        # --- Past Events (2025) ---
+        {
+            "id": "ev-past-01", "title": "Summer Pottery Fair",
+            "craft_tags": ["Terracotta clay", "Ceramics", "Pottery"],
+            "start_date": date(2025, 7, 15), "end_date": date(2025, 7, 17),
+            "venue": "Bhopal Grounds", "city": "Bhopal, Madhya Pradesh",
+            "description": "A showcase of central India's finest pottery.",
+        },
+        {
+            "id": "ev-past-02", "title": "Monsoon Weaves",
+            "craft_tags": ["Fabric", "Silk", "Weaving"],
+            "start_date": date(2025, 8, 22), "end_date": date(2025, 8, 24),
+            "venue": "Kolkata Expo Centre", "city": "Kolkata, West Bengal",
+            "description": "Featuring Baluchari and Jamdani sarees.",
+        },
+        {
+            "id": "ev-past-apr", "title": "Channapatna Toys Festival",
+            "craft_tags": ["Wood", "Toys"],
+            "start_date": date(2025, 4, 10), "end_date": date(2025, 4, 14),
+            "venue": "Crafts Village", "city": "Channapatna, Karnataka",
+            "description": "A vibrant festival for traditional toy makers.",
+        },
+        {
+            "id": "ev-past-jun", "title": "Leather Craft Expo",
+            "craft_tags": ["Leather"],
+            "start_date": date(2025, 6, 5), "end_date": date(2025, 6, 7),
+            "venue": "Kanpur Trade Hall", "city": "Kanpur, Uttar Pradesh",
+            "description": "Connecting leather artisans with international buyers.",
+        },
+
+        # --- Upcoming Events (2025) relative to 'today' (Sept 10, 2025) ---
+        {
+            "id": "ev-005", "title": "All-India Craft Dialogue",
+            "craft_tags": ["All", "Policy", "Market"],
+            "start_date": today + timedelta(days=1),  # Sep 11
+            "end_date": today + timedelta(days=1),
+            "venue": "Pragati Maidan - Hall 6", "address": "Pragati Maidan Complex",
+            "city": "New Delhi",
+            "description": "A forum for artisans to discuss market linkages and policy.",
+        },
+        {
+            "id": "ev-001", "title": "Handmade Bazaar",
+            "craft_tags": ["Terracotta clay", "Ceramics", "Pottery"],
+            "start_date": today + timedelta(days=6),  # Sep 16
+            "end_date": today + timedelta(days=8),    # Sep 18
+            "venue": "Amber Grounds", "address": "Amber Rd, Near Amer Fort",
+            "city": "Jaipur, Rajasthan",
+            "description": "A curated fair for pottery and terracotta artisans from Rajasthan.",
+        },
+        {
+            "id": "ev-sep-17", "title": "Artisan Weavers Meet",
+            "craft_tags": ["Weaving", "Fabric"],
+            "start_date": date(2025, 9, 17), "end_date": date(2025, 9, 17),
+            "venue": "Community Hall", "city": "Jaipur, Rajasthan",
+            "description": "A meeting for local weavers.",
+        },
+        {
+            "id": "ev-sep-24", "title": "Bazaar Planning Session",
+            "craft_tags": ["Market", "Policy"],
+            "start_date": date(2025, 9, 24), "end_date": date(2025, 9, 24),
+            "venue": "Online", "city": "Virtual",
+            "description": "Planning for the next big bazaar.",
+        },
+        {
+            "id": "ev-002", "title": "Banarasi Silks Expo",
+            "craft_tags": ["Fabric", "Silk", "Weaving"],
+            "start_date": today + timedelta(days=17),  # Sep 27
+            "end_date": today + timedelta(days=18),    # Sep 28
+            "venue": "Vishwanath Conference Hall",
+            "address": "Manduadih Rd, Near Kashi Vishwanath Temple",
+            "city": "Varanasi, Uttar Pradesh",
+            "description": "Silk weavers showcase and buyer connect event.",
+        },
+        {
+            "id": "ev-003", "title": "Kutch Embroidery Symposium",
+            "craft_tags": ["Embroidery", "Bandhani", "Fabric"],
+            "start_date": today + timedelta(days=32),  # Oct 12
+            "end_date": today + timedelta(days=33),    # Oct 13
+            "venue": "Bhuj Crafts Centre",
+            "address": "Plot 12, Crafts Complex, Bhuj",
+            "city": "Bhuj, Kutch, Gujarat",
+            "description": "Workshops and exhibitions focusing on Kutch embroidery.",
+        },
+        {
+            "id": "ev-diwali", "title": "Diwali Crafts Mela",
+            "craft_tags": ["All", "Festive", "Pottery", "Fabric"],
+            "start_date": date(2025, 10, 25), "end_date": date(2025, 10, 30),
+            "venue": "Dilli Haat INA", "city": "New Delhi",
+            "description": "The biggest festive market for artisans.",
+        },
+        {
+            "id": "ev-winter", "title": "Winter Pashmina Showcase",
+            "craft_tags": ["Fabric", "Wool"],
+            "start_date": date(2025, 12, 18), "end_date": date(2025, 12, 22),
+            "venue": "Srinagar Arts Emporium", "city": "Srinagar, Jammu & Kashmir",
+            "description": "Exclusive showcase of fine Pashmina shawls.",
+        },
+
+        # --- Next Year (2026) ---
+        {
+            "id": "ev-2026-01", "title": "New Year Woodcraft Show",
+            "craft_tags": ["Wood", "Carving"],
+            "start_date": date(2026, 1, 10), "end_date": date(2026, 1, 12),
+            "venue": "Mysore Palace Grounds", "city": "Mysuru, Karnataka",
+            "description": "Exhibition of fine sandalwood and rosewood carving.",
+        },
+        {
+            "id": "ev-2026-02", "title": "Republic Day Parade Crafts",
+            "craft_tags": ["All", "National"],
+            "start_date": date(2026, 1, 26), "end_date": date(2026, 1, 26),
+            "venue": "Kartavya Path", "city": "New Delhi",
+            "description": "Selected artisans showcase their state's craft in the parade.",
+        },
+        {
+            "id": "ev-2026-03", "title": "Spring Metalwork Conclave",
+            "craft_tags": ["Metals", "Brass"],
+            "start_date": date(2026, 3, 5), "end_date": date(2026, 3, 7),
+            "venue": "Moradabad Trade Center", "city": "Moradabad, Uttar Pradesh",
+            "description": "A B2B event for brass and metal artisans.",
+        },
+        {
+            "id": "ev-2026-04", "title": "Pattachitra Art Camp",
+            "craft_tags": ["Painting", "Art"],
+            "start_date": date(2026, 5, 20), "end_date": date(2026, 5, 25),
+            "venue": "Raghurajpur Heritage Village", "city": "Puri, Odisha",
+            "description": "A live-in art camp for Pattachitra painters.",
+        },
+        {
+            "id": "ev-2026-05", "title": "Southern Silk Summit",
+            "craft_tags": ["Silk", "Fabric"],
+            "start_date": date(2026, 8, 15), "end_date": date(2026, 8, 17),
+            "venue": "Chennai Trade Centre", "city": "Chennai, Tamil Nadu",
+            "description": "Showcasing Kanjeevaram and other southern silks.",
+        },
     ]
+    return events
 
 def filter_events_by_crafts(events: List[Dict[str, Any]], crafts: List[str]) -> List[Dict[str, Any]]:
     if not crafts: return events
@@ -190,8 +341,24 @@ def upcoming_events(events: List[Dict[str, Any]], days_ahead: int = 14) -> List[
     return [e for e in events if e['start_date'] <= horizon and e['end_date'] >= today]
 
 def days_until(d: date) -> int:
-    today = date(2025, 9, 12)
+    # Unified baseline date with calendar (was 2025-09-12 elsewhere)
+    today = date(2025, 9, 13)
     return (d - today).days
+
+# Added helpers for improved calendar wording
+def format_days(count: int, lang: str) -> str:
+    if lang == "Hindi":
+        return f"{count} दिन"
+    unit = "day" if abs(count) == 1 else "days"
+    return f"{count} {unit}"
+
+def clean_day_artifacts(text: str) -> str:
+    import re as _re
+    text = _re.sub(r"\bday\(s\)\b", "", text)
+    text = _re.sub(r"\s{2,}", " ", text).strip()
+    text = _re.sub(r"(\b\d+\s+days?)\s+day\(s\)", r"\1", text)
+    text = _re.sub(r"(\b\d+\s+day)\s+day\(s\)", r"\1", text)
+    return text
 
 def clear_results():
     st.session_state.ai_results = None
@@ -247,7 +414,7 @@ pottery_theme_css = """
     }
     .stApp { background-color: var(--background-color); background-image: var(--background-image-url); background-attachment: fixed; color: var(--primary-text-color); }
     h1, h2, h3, h4, h5, h6, .stMarkdown, label, p, .stAlert, [data-baseweb="tab"] { color: var(--primary-text-color) !important; font-family: var(--font); }
-    p, li, div, label, .stMarkdown { font-size: 1.1rem; }
+    p, li, div, label, .stMarkdown { font-size: 1.15rem; }
     [data-testid="stSidebar"] { background-color: var(--sidebar-background); border-right: 1px solid var(--border-color); }
     [data-testid="stHeader"] { background-color: rgba(253, 245, 230, 0.8); backdrop-filter: blur(10px); box-shadow: none; border-bottom: 1px solid var(--border-color); }
     .stSelectbox, .stTextInput, .stTextArea, .stFileUploader, .stMultiSelect { border-radius: var(--border-radius); }
@@ -256,89 +423,135 @@ pottery_theme_css = """
     .stButton > button { background-color: var(--accent-color); color: white; border: none; padding: 12px 28px; font-size: 16px; font-weight: bold; border-radius: var(--border-radius); box-shadow: var(--shadow); transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out; }
     .stButton > button:hover { background-color: var(--accent-hover-color); transform: scale(1.02); }
     .stButton > button:active { transform: scale(0.98); }
+    .stButton > button:disabled { background-color: var(--accent-color); color: white; opacity: 1; cursor: not-allowed; }
     .stTabs [data-baseweb="tab-list"] { gap: 8px; }
     .stTabs [data-baseweb="tab"] { background-color: transparent; border-radius: var(--border-radius) var(--border-radius) 0 0; border-bottom: 2px solid var(--border-color); padding: 10px 16px; }
     .stTabs [aria-selected="true"] { background-color: var(--widget-background); border-bottom: 2px solid var(--accent-color); box-shadow: var(--shadow); }
-    .stCodeBlock, .st-emotion-cache-1f2d20p { background-color: #F5F0E8; color: var(--primary-text-color); border-left: 5px solid var(--accent-color); border-radius: var(--border-radius); padding: 1rem; font-size: 1rem !important; }
+    .stCodeBlock, .st-emotion-cache-1f2d20p { background-color: #F5F0E8; color: var(--primary-text-color); border-left: 5px solid var(--accent-color); border-radius: var(--border-radius); padding: 1rem; font-size: 1.15rem !important; }
     .stAlert { border-radius: var(--border-radius); box-shadow: var(--shadow); }
     .stAlert.success { background-color: #E8F5E9; border-left: 8px solid #4CAF50; }
     .stAlert.warning { background-color: #FFFDE7; border-left: 8px solid #FFC107; }
     .stAlert.info { background-color: #E1F5FE; border-left: 8px solid #03A9F4; }
     
-    /* Calendar-specific CSS */
-    /* Basic styling for smooth scrolling */
-    html { scroll-behavior: smooth; }
-
-    /* Header for Days of the Week */
-    .day-header { font-weight: 600; text-align: center; margin-bottom: 10px; color: #888; }
-
-    /* Individual Day Cell */
-    .calendar-day { min-height: 140px; border: 1px solid #ddd; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-
-    /* Highlight for Today's Date */
-    .calendar-day.today { border: 2px solid #007bff; background-color: #e7f3ff; }
-
-    /* The number in the top-right of the cell */
-    .day-number { text-align: right; font-size: 14px; font-weight: 600; margin-bottom: 5px; }
-
-    /* Separator line between date and events */
-    .day-separator { border: none; height: 1px; background-color: #eee; margin: 0 0 5px 0; }
-
-    /* Container for events below the date */
-    .events-container { 
-        flex-grow: 1; 
-        overflow: hidden; /* Hide overflowing events */
-        position: relative;
+    /* --- UPDATED CALENDAR CSS (New provided variant) --- */
+    .demo-container {
+        display: flex;
+        gap: 10px;
     }
 
-    /* Add a subtle fade-out effect if there are more events than can be shown */
-    .events-container.has-more::after {
-        content: '...';
-        position: absolute;
-        bottom: 0;
-        right: 5px;
-        font-size: 14px;
-        font-weight: bold;
-        color: #8B4513;
+    .calendar-cell {
+        background: #FFFFFF;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        min-height: 120px;
+        width: 170px;
+        padding: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        overflow: hidden;
     }
 
-    /* Base styling for each event tag */
-    .calendar-event { 
-        font-size: 11px; 
-        background-color: #8B4513; 
-        color: white; 
-        padding: 3px 6px; 
-        border-radius: 5px;  
-        margin-bottom: 3px; 
-        overflow: hidden; 
-        text-overflow: ellipsis; 
-        white-space: nowrap; 
-        cursor: pointer; 
+    .day-number {
+        font-weight: 500;
+        font-size: 0.875rem; /* 14px equivalent */
+        color: #111827;
+        margin: 0;
     }
 
-    /* Styling for continuous event blocks */
-    .calendar-event.event-start { border-top-right-radius: 0; border-bottom-right-radius: 0; }
-    .calendar-event.event-middle { border-radius: 0; }
-    .calendar-event.event-end { border-top-left-radius: 0; border-bottom-left-radius: 0; }
-    .calendar-event:not(.event-start):not(.event-middle):not(.event-end) { border-radius: 5px; }
+    .events-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        overflow: hidden;
+    }
 
-    /* Remove underline from links */
-    a { text-decoration: none; }
-
-    /* Center align the month header text */
-    .month-header { text-align: center; }
+    .event-bar {
+        background-color: #5D4037;
+        color: white;
+        padding: 3px 6px;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 </style>
 """
 st.markdown(pottery_theme_css, unsafe_allow_html=True)
+# ...existing code above...
 
+# REPLACE the existing second calendar style block (the one that makes .day-number absolute)
+# with this updated block so events render below the date number cleanly.
 st.markdown("""
 <style>
-    .calendar-cell{min-height:110px;padding:8px;border-radius:10px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.06);position:relative}
-    .day-number{position:absolute;top:6px;right:6px;background:#d46c04;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
-    .calendar-event-container{margin-top:32px;padding:6px;border-radius:6px;background:rgba(212,108,4,0.08)}
-    .calendar-event-container.concluded{text-decoration:line-through;opacity:.55}
+    /* Calendar layout fix: keep date at top, events below (no overlay) */
+    .calendar-cell {
+        min-height:120px;
+        padding:8px 8px 6px;
+        border-radius:10px;
+        background:#fff;
+        box-shadow:0 2px 4px rgba(0,0,0,.06);
+        position:relative;
+        border:1px solid #E5E7EB;
+        display:flex;
+        flex-direction:column;
+    }
+    .calendar-cell.is-today { outline:2px solid #d46c04; }
+    .calendar-cell.is-past { opacity:.78; }
+
+    /* Date number now inline (not absolute) so events naturally flow below */
+    .calendar-cell .day-number {
+        position:static;
+        background:transparent;
+        color:#5D4037;
+        width:auto;
+        height:auto;
+        border-radius:0;
+        display:flex;
+        align-items:center;
+        justify-content:flex-start;
+        font-size:13px;
+        font-weight:700;
+        padding:0;
+        margin:0 0 4px 0;
+    }
+
+    /* Events container fills remaining vertical space */
+    .calendar-cell .events-container {
+        flex:1;
+        display:flex;
+        flex-direction:column;
+        gap:3px;
+        overflow:hidden;
+    }
+
+    /* Multi‑day bar styles */
+    .event-bar {
+        background:#8B4513;
+        color:#fff;
+        padding:3px 6px;
+        font-size:11px;
+        font-weight:500;
+        border-radius:5px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        line-height:1.1;
+    }
+    .event-bar-start { border-top-right-radius:0; border-bottom-right-radius:0; }
+    .event-bar-middle { border-radius:0; }
+    .event-bar-end { border-top-left-radius:0; border-bottom-left-radius:0; }
+
+    /* Remove legacy container style that pushed content over the date */
+    .calendar-event-container { margin-top:0; background:transparent; padding:0; box-shadow:none; }
 </style>
 """, unsafe_allow_html=True)
+
+# ...existing code below...
 
 # --- 4. AI & AUTHENTICATION CONFIG ---
 try:
@@ -759,113 +972,229 @@ def show_main_app():
     elif workflow == t('workflow_option_4', page_language):
         st.subheader(t('events_header', page_language))
 
-        filtered_upcoming = upcoming_events(
-            filter_events_by_crafts(st.session_state['events'], st.session_state['user'].get('preferred_crafts', [])),
-            days_ahead=st.session_state.reminder_days
-        )
-        reminders_for_user = st.session_state['reminders'].get(uid, [])
-        active_reminders = [ev for ev in filtered_upcoming if ev['id'] in reminders_for_user]
+        # --- Reminder & Event Window Logic Updates ---
+        today_ref = date(2025, 9, 13)  # single consistent 'today'
+        retention_days = 14  # keep ended events up to 2 weeks old
+        reminder_window_days = st.session_state.reminder_days
 
-        if active_reminders:
-            st.markdown(f"**{t('upcoming_events_info', page_language).format(count=len(active_reminders), days=st.session_state.reminder_days)}**")
-            for ev in active_reminders:
+        uid = st.session_state['user']['uid']
+        reminders_for_user = set(st.session_state['reminders'].get(uid, []))
+
+        # Filter by crafts first
+        base_events = filter_events_by_crafts(
+            st.session_state['events'],
+            st.session_state['user'].get('preferred_crafts', [])
+        )
+
+        # Keep past events only if they ended within retention window
+        retention_cutoff = today_ref - timedelta(days=retention_days)
+        visible_events = [
+            ev for ev in base_events
+            if not (ev['end_date'] < retention_cutoff)  # drop very old past events
+        ]
+
+        # Upcoming events (within user reminder window) for summary section (future or ongoing)
+        upcoming_horizon = today_ref + timedelta(days=reminder_window_days)
+        upcoming_candidates = [
+            ev for ev in visible_events
+            if ev['start_date'] <= upcoming_horizon and ev['end_date'] >= today_ref
+        ]
+
+        # Recently ended events (ended within retention window, i.e., last 14 days)
+        recently_ended = [
+            ev for ev in visible_events
+            if ev['end_date'] < today_ref and ev['end_date'] >= retention_cutoff
+        ]
+
+        def persist_reminders():
+            st.session_state['reminders'][uid] = list(reminders_for_user)
+            firebase_auth.save_user_data(
+                db_handler,
+                uid,
+                {
+                    'preferred_crafts': st.session_state['user'].get('preferred_crafts', []),
+                    'reminders': st.session_state['reminders'][uid]
+                }
+            )
+
+        # --- Summary / Quick Reminder Toggle Section ---
+        st.markdown(f"**Upcoming & Ongoing (next {reminder_window_days} days)**")
+        if not upcoming_candidates:
+            st.info(t('no_upcoming_events', page_language).format(days=reminder_window_days))
+        else:
+            for ev in sorted(upcoming_candidates, key=lambda e: (e['start_date'], e['title'])):
                 d_left = days_until(ev['start_date'])
                 if d_left > 0:
-                    st.info(f"**{ev['title']}** - {t('event_when', page_language).format(days=d_left)}")
+                    status = f"⏳ {t('event_when', page_language).format(days=format_days(d_left, page_language))}"
                 elif d_left == 0:
-                    st.info(f"**{ev['title']}** - ✨ Starting Today!")
+                    status = "✨ Starting Today!"
                 else:
-                    st.success(f"**{ev['title']}** - {t('event_when_ago', page_language).format(days=abs(d_left))}")
-        else:
-            st.info(t('no_upcoming_events', page_language).format(days=st.session_state.reminder_days))
+                    status = f"🟢 {t('event_ongoing', page_language)}"
+                cols = st.columns([4, 2])
+                with cols[0]:
+                    st.markdown(f"**{ev['title']}** · {ev['city']} — {status}")
+                with cols[1]:
+                    if ev['start_date'] > today_ref:  # only future events toggle reminders
+                        if ev['id'] in reminders_for_user:
+                            if st.button(t('cancel_reminder_button', page_language), key=f"sum_cancel_{ev['id']}", use_container_width=True):
+                                reminders_for_user.remove(ev['id'])
+                                persist_reminders()
+                                st.success(t('reminder_cancelled_success', page_language))
+                                st.rerun()
+                        else:
+                            if st.button(t('set_reminder_button', page_language), key=f"sum_set_{ev['id']}", use_container_width=True, type="primary"):
+                                reminders_for_user.add(ev['id'])
+                                persist_reminders()
+                                st.success(t('reminder_set_success', page_language))
+                                st.rerun()
+                    else:
+                        st.button(t('event_ongoing', page_language), key=f"sum_on_{ev['id']}", disabled=True, use_container_width=True)
+
+        # Recently Ended Section
+        if recently_ended:
+            st.markdown("**Recently Ended (last 14 days)**")
+            for ev in sorted(recently_ended, key=lambda e: e['end_date'], reverse=True):
+                days_ago = (today_ref - ev['end_date']).days
+                st.caption(f"{ev['title']} · {ev['city']} — {t('ended_ago_caption', page_language).format(days=format_days(days_ago, page_language))}")
 
         st.markdown("---")
         st.subheader(t('calendar_header', page_language))
 
-        def update_calendar(direction):
+        def update_calendar_view(direction: str):
             base = date(st.session_state.calendar_year, st.session_state.calendar_month, 1)
-            new_date = base - timedelta(days=1) if direction == "prev" else base + timedelta(days=32)
-            st.session_state.calendar_year = new_date.year
-            st.session_state.calendar_month = new_date.month
+            new_base = base - timedelta(days=1) if direction == "prev" else base + timedelta(days=32)
+            st.session_state.calendar_year = new_base.year
+            st.session_state.calendar_month = new_base.month
 
-        c1,c2,c3 = st.columns([1,5,1])
-        with c1:
-            if st.button("←"): update_calendar("prev"); st.rerun()
-        with c2:
-            st.markdown(f"<h3 style='text-align:center;'>{calendar.month_name[st.session_state.calendar_month]} {st.session_state.calendar_year}</h3>", unsafe_allow_html=True)
-        with c3:
-            if st.button("→"): update_calendar("next"); st.rerun()
+        nav_l, nav_c, nav_r = st.columns([1,5,1])
+        with nav_l:
+            if st.button("←", key="cal_prev"):
+                update_calendar_view("prev")
+                st.rerun()
+        with nav_c:
+            st.markdown(
+                f"<h3 style='text-align:center;'>{calendar.month_name[st.session_state.calendar_month]} {st.session_state.calendar_year}</h3>",
+                unsafe_allow_html=True
+            )
+        with nav_r:
+            if st.button("→", key="cal_next"):
+                update_calendar_view("next")
+                st.rerun()
 
         cal = calendar.Calendar()
-        month_days = cal.monthdayscalendar(st.session_state.calendar_year, st.session_state.calendar_month)
-        days_of_week = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
-        cols = st.columns(7)
-        for i,dw in enumerate(days_of_week):
-            with cols[i]:
-                st.markdown(f"<p style='text-align:center;'><b>{dw}</b></p>", unsafe_allow_html=True)
+        month_matrix = cal.monthdayscalendar(st.session_state.calendar_year, st.session_state.calendar_month)
+        days_header = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
+        hdr_cols = st.columns(7)
+        for i, dw in enumerate(days_header):
+            with hdr_cols[i]:
+                st.markdown(f"<p style='text-align:center;font-weight:600;'>{dw}</p>", unsafe_allow_html=True)
 
-        for week in month_days:
-            cols = st.columns(7)
-            for i,day in enumerate(week):
-                with cols[i]:
-                    if day == 0: continue
-                    current_date = date(st.session_state.calendar_year, st.session_state.calendar_month, day)
-                    st.markdown(f"<div class='calendar-cell'>", unsafe_allow_html=True)
-                    st.markdown(f"<div class='day-number'>{day}</div>", unsafe_allow_html=True)
-                    day_events = [ev for ev in st.session_state['events'] if ev['start_date'] <= current_date <= ev['end_date']]
-                    day_events = filter_events_by_crafts(day_events, st.session_state['user'].get('preferred_crafts', []))
-                    for ev in day_events:
-                        concluded = days_until(ev['end_date']) < 0
-                        cls = "calendar-event-container concluded" if concluded else "calendar-event-container"
-                        st.markdown(f"<div class='{cls}'>**{ev['title']}**<br><small>{ev['city']}</small></div>", unsafe_allow_html=True)
-                    st.markdown("</div>", unsafe_allow_html=True)
+        today_fixed = today_ref  # Align with new calendar baseline (or replace with date.today())
+        for week in month_matrix:
+            wk_cols = st.columns(7)
+            for i, day_val in enumerate(week):
+                with wk_cols[i]:
+                    if day_val == 0:
+                        st.markdown("<div class='calendar-cell empty'></div>", unsafe_allow_html=True)
+                        continue
+                    current_day = date(st.session_state.calendar_year, st.session_state.calendar_month, day_val)
+                    is_today = current_day == today_fixed
+                    is_past = current_day < today_fixed
+
+                    classes = ["calendar-cell"]
+                    if is_today: classes.append("is-today")
+                    if is_past: classes.append("is-past")
+
+                    day_events = [
+                        ev for ev in visible_events
+                        if ev['start_date'] <= current_day <= ev['end_date']
+                    ]
+                    day_events = filter_events_by_crafts(
+                        day_events,
+                        st.session_state['user'].get('preferred_crafts', [])
+                    )
+                    day_events_sorted = sorted(day_events, key=lambda ev: (ev['start_date'], ev['title']))
+
+                    bars_html = []
+                    for ev in day_events_sorted:
+                        bar_cls = ["event-bar"]
+                        start_flag = current_day == ev['start_date']
+                        end_flag = current_day == ev['end_date']
+                        if not (start_flag and end_flag):
+                            if start_flag:
+                                bar_cls.append("event-bar-start")
+                            elif end_flag:
+                                bar_cls.append("event-bar-end")
+                            else:
+                                bar_cls.append("event-bar-middle")
+                        title_html = ev['title'] if start_flag else "&nbsp;"
+                        bars_html.append(f"<div class='{' '.join(bar_cls)}'>{title_html}</div>")
+
+                    html = f"""
+                    <div class="{' '.join(classes)}">
+                      <div class="day-number">{day_val}</div>
+                      <div class="events-container">{''.join(bars_html)}</div>
+                    </div>
+                    """
+                    st.markdown(html, unsafe_allow_html=True)
 
         st.markdown("---")
         st.subheader(t('events_list_header', page_language))
 
-        filtered_events = filter_events_by_crafts(st.session_state['events'], st.session_state['user'].get('preferred_crafts', []))
-        if not filtered_events:
-            st.info("No events found for your selected crafts.")
-        for ev in sorted(filtered_events, key=lambda e: e['start_date']):
-            col1, col2 = st.columns([3,1])
-            with col1:
-                st.markdown(f"#### {ev['title']}")
-                st.markdown(f"**{t('event_dates_label', page_language)}** {ev['start_date'].strftime('%b %d, %Y')} - {ev['end_date'].strftime('%b %d, %Y')}")
-                st.markdown(f"**{t('event_venue_label', page_language)}** {ev.get('venue')}, {ev.get('city')}")
-                st.markdown(f"**{t('event_tags_label', page_language)}** {', '.join(ev.get('craft_tags', []))}")
-                st.write(ev.get('description',''))
-                d_left = days_until(ev['start_date'])
-                if d_left > 0:
-                    st.info(t('starts_in_caption', page_language).format(days=d_left))
-                elif d_left < 0:
-                    st.warning(t('started_ago_caption', page_language).format(days=abs(d_left)))
-            with col2:
-                reminders_for_user = st.session_state['reminders'].setdefault(uid, [])
-                is_set = ev['id'] in reminders_for_user
+        # Reuse visible_events (already retention-filtered)
+        def event_sort_key(ev):
+            if ev['start_date'] <= today_ref <= ev['end_date']:
+                return (0, ev['start_date'])
+            elif ev['start_date'] > today_ref:
+                return (1, ev['start_date'])
+            else:
+                return (2, -((today_ref - ev['start_date']).days))
 
-                def persist():
-                    firebase_auth.save_user_data(
-                        db_handler,
-                        uid,
-                        {
-                            'preferred_crafts': st.session_state['user']['preferred_crafts'],
-                            'reminders': st.session_state['reminders'][uid]
-                        }
-                    )
+        if not visible_events:
+            st.info("No events match filters or are within retention window.")
+        else:
+            for ev in sorted(visible_events, key=event_sort_key):
+                list_c1, list_c2 = st.columns([3,1])
+                with list_c1:
+                    st.markdown(f"#### {ev['title']}")
+                    st.markdown(f"**{t('event_dates_label', page_language)}** {ev['start_date'].strftime('%b %d, %Y')} - {ev['end_date'].strftime('%b %d, %Y')}")
+                    st.markdown(f"**{t('event_venue_label', page_language)}** {ev.get('venue')}, {ev.get('city')}")
+                    st.markdown(f"**{t('event_tags_label', page_language)}** {', '.join(ev.get('craft_tags', []))}")
+                    st.write(ev.get('description',''))
 
-                if is_set:
-                    if st.button(t('cancel_reminder_button', page_language).format(event_id=ev['id']), key=f"cancel_{ev['id']}", use_container_width=True):
-                        reminders_for_user.remove(ev['id'])
-                        persist()
-                        st.success(t('reminder_cancelled_success', page_language))
-                        st.rerun()
-                else:
-                    if st.button(t('set_reminder_button', page_language).format(event_id=ev['id']), key=f"set_{ev['id']}", use_container_width=True):
-                        reminders_for_user.append(ev['id'])
-                        persist()
-                        st.success(t('reminder_set_success', page_language))
-                        st.rerun()
-            st.markdown("---")
+                    ds = days_until(ev['start_date'])
+                    de = days_until(ev['end_date'])
+                    if ds > 0:
+                        st.info(clean_day_artifacts(
+                            t('starts_in_caption', page_language).format(days=format_days(ds, page_language))
+                        ))
+                    elif de < 0:
+                        st.warning(clean_day_artifacts(
+                            t('ended_ago_caption', page_language).format(days=format_days(abs(de), page_language))
+                        ))
+                    else:
+                        st.success(t('event_ongoing', page_language))
+
+                with list_c2:
+                    # Reminder toggles only for future events
+                    if ev['end_date'] < today_ref:
+                        st.button(t('event_done', page_language), key=f"done_{ev['id']}", disabled=True, use_container_width=True)
+                    elif ev['start_date'] <= today_ref <= ev['end_date']:
+                        st.button(t('event_ongoing', page_language), key=f"ongoing_{ev['id']}", disabled=True, use_container_width=True)
+                    else:
+                        if ev['id'] in reminders_for_user:
+                            if st.button(t('cancel_reminder_button', page_language), key=f"cancel_{ev['id']}", use_container_width=True):
+                                reminders_for_user.remove(ev['id'])
+                                persist_reminders()
+                                st.success(t('reminder_cancelled_success', page_language))
+                                st.rerun()
+                        else:
+                            if st.button(t('set_reminder_button', page_language), key=f"set_{ev['id']}", use_container_width=True, type="primary"):
+                                reminders_for_user.add(ev['id'])
+                                persist_reminders()
+                                st.success(t('reminder_set_success', page_language))
+                                st.rerun()
+                st.markdown("---")
 
     # RESULTS
     if st.session_state.get('ai_results'):
