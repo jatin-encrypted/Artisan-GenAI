@@ -14,8 +14,7 @@ import vertexai
 from vertexai.preview.vision_models import ImageGenerationModel
 
 import firebase_auth  # Helper module for Firebase (email/password auth, db helpers)
-
-# --- 1. TRANSLATIONS DICTIONARY (UNCHANGED) ---
+import base64
 translations = {
     "English": {
         "app_title": "Artisans AI Studio",
@@ -55,6 +54,7 @@ translations = {
         "planner_subheader": "Social Media Growth Planner",
         "plan_language_label": "Plan Language",
         "planner_platform_label": "Choose platforms for your plan",
+        "planner_platform_placeholder": "Choose platforms",
         "planner_craft_label": "Describe your craft/art",
         "planner_craft_placeholder": "e.g., Handmade blue pottery from Jaipur",
         "planner_audience_label": "Describe your target audience",
@@ -91,6 +91,7 @@ translations = {
         "landing_info": "You can change this path anytime from the sidebar.",
         "back_to_home": "Back to Home",
         "desc_heading": "Description (Optional)",
+        # Calendar Translations
         "events_header": "📅 Artisans Events & Notifications",
         "event_preferences_header": "Event Preferences",
         "event_preferences_info": "Choose crafts you are interested in — notifications will match these tags.",
@@ -98,8 +99,8 @@ translations = {
         "notify_days_label": "Notify me about events up to (days ahead)",
         "upcoming_events_info": "You have {count} upcoming event(s) matching your selected crafts (next {days} days):",
         "no_upcoming_events": "No matching events in the next {days} days.",
-        "event_when": "in {days}",
-        "event_when_ago": "{days} ago",
+    "event_when": "in {days}",
+    "event_when_ago": "{days} ago",
         "event_venue_label": "Venue:",
         "set_reminder_button": "Set Reminder",
         "cancel_reminder_button": "Cancel Reminder",
@@ -109,33 +110,99 @@ translations = {
         "events_list_header": "Events List & Details",
         "event_dates_label": "Dates:",
         "event_tags_label": "Tags:",
-        "starts_in_caption": "Starts in {days}",
-        "started_ago_caption": "Event started {days} ago",
-        "active_reminder_warning": "Reminder: '{title}' starts in {days} day(s) on {date}. Venue: {venue} — {city}",
+    "starts_in_caption": "Starts in {days}",
+    "started_ago_caption": "Event started {days} ago",
+    "ended_ago_caption": "Event ended {days} ago",
+    "active_reminder_warning": "Reminder: '{title}' starts in {days} on {date}. Venue: {venue} — {city}",
         "no_active_reminders": "No active reminders within your reminder window.",
         "event_concluded": "Event Concluded",
         "calendar_year_label": "Year",
         "calendar_month_label": "Month",
-        "event_done": "Event Done",
-        "event_ongoing": "Event Ongoing",
-        "ended_ago_caption": "Event ended {days} ago",
+        # Field Labels
         "field_label_title": "Title",
         "field_label_materials": "Materials",
         "field_label_region": "Region",
-        "field_label_tone": "Tone"
+        "field_label_tone": "Tone",
+        # Event Status Messages
+        "event_done": "Event Done",
+        "event_ongoing": "Event Ongoing",
     },
     "Hindi": {
-        "app_title": "कलाकार एआई स्टूडियो",
+        "app_title": "Artisans AI Studio",
         "app_subheader": "कंटेंट निर्माण, छवि निर्माण और विकास योजना के लिए आपका ऑल-इन-वन टूल।",
-        # (Abbreviated for brevity)
+        "controls_header": "नियंत्रण",
+        "page_language_label": "पेज की भाषा",
+        "page_language_help": "यूजर इंटरफेस के लिए मुख्य भाषा चुनें।",
+        "caption_language_label": "सामग्री की भाषा",
+        "caption_language_help": "कहानी और सभी सोशल मीडिया कैप्शन (इंस्टाग्राम, फेसबुक, ट्विटर) के लिए भाषा चुनें।",
+        "workflow_label": "अपना रचनात्मक मार्ग चुनें:",
         "workflow_option_1": "मार्केटिंग किट बनाएं",
         "workflow_option_2": "बाजार के रुझान खोजें",
         "workflow_option_3": "विकास योजना बनाएं",
         "workflow_option_4": "कार्यक्रम और कैलेंडर",
+        "generate_kit_subheader": "मार्केटिंग किट बनाएं",
+        "image_source_label": "अपनी छवि का स्रोत चुनें:",
+        "source_option_1": "एआई को आपके लिए एक छवि बनाने दें",
+        "source_option_2": "अपनी खुद की छवि अपलोड करें",
+        "prompt_subheader": "उस सामग्री का वर्णन करें जो आप चाहते हैं",
+        "prompt_placeholder_title": "जैसे, हस्तनिर्मित टेराकोटा दीया",
+        "prompt_placeholder_materials": "जैसे, टेराकोटा मिट्टी, प्राकृतिक रंग",
+        "prompt_placeholder_region": "जैसे, बिष्णुपुर, पश्चिम बंगाल",
+        "prompt_placeholder_tone": "जैसे, देहाती, उत्सवपूर्ण, आधुनिक, सांस्कृतिक",
+        "prompt_placeholder_description": "जैसे, 'एक मधुबनी कलाकार के बारे में एक कहानी जिसका काम प्रकृति की भावना को दर्शाता है।'",
+        "generate_button": "मार्केटिंग किट बनाएं",
+        "prompt_warning": "सामग्री बनाने के लिए कृपया एक शीर्षक या क्षेत्र दर्ज करें।",
+        "upload_image_subheader": "अपनी खुद की छवि अपलोड करें",
+        "image_uploader_label": "छवि अपलोड करें",
+        "image_uploader_help": ".png, .jpg, या .jpeg फ़ाइल अपलोड करें।",
+        "upload_warning": "सामग्री बनाने के लिए कृपया एक छवि अपलोड करें और एक शीर्षक या क्षेत्र दर्ज करें।",
+        "trends_subheader": "रुझान संबंधी जानकारी प्राप्त करें",
+        "trends_language_label": "रुझान की भाषा",
+        "trends_label": "अपनी कला का प्रकार दर्ज करें",
+        "trends_placeholder": "जैसे, मधुबनी पेंटिंग, ब्लू पॉटरी, कांथा कढ़ाई",
+        "trends_button": "रुझान बनाएं",
+        "trends_warning": "कृपया रुझान प्राप्त करने के लिए अपनी कला का प्रकार और एक क्षेत्र दर्ज करें।",
+        "planner_subheader": "सोशल मीडिया विकास योजनाकार",
+        "plan_language_label": "योजना की भाषा",
+        "planner_platform_label": "अपनी योजना के लिए प्लेटफ़ॉर्म चुनें",
+        "planner_platform_placeholder": "प्लेटफ़ॉर्म चुनें",
+        "planner_craft_label": "अपनी कला का वर्णन करें",
+        "planner_craft_placeholder": "जैसे, जयपुर से हस्तनिर्मित ब्लू पॉटरी",
+        "planner_audience_label": "अपने लक्षित दर्शकों का वर्णन करें",
+        "planner_audience_placeholder": "जैसे, पर्यटक, इंटीरियर डिजाइनर, 25-40 आयु वर्ग के लोग",
+        "planner_button": "योजना बनाएं",
+        "planner_warning": "कृपया कम से कम एक प्लेटफ़ॉर्म चुनें, अपनी कला का वर्णन करें, और एक क्षेत्र दर्ज करें।",
+        "spinner_text_content": "एआई आपकी कहानी और कैप्शन {caption_lang} में तैयार कर रहा है...",
+        "spinner_text_image": "इमेजेन 2 के साथ एक अनूठी छवि बना रहा है... 🖼",
+        "spinner_text_trends": "{trends_lang} में बाजार के रुझानों का विश्लेषण किया जा रहा है...",
+        "spinner_text_planner": "{plan_lang} में आपकी कस्टम विकास योजना बन रही है...",
+        "results_header": "आपकी जेनरेट की गई मार्केटिंग किट",
+        "content_ready": "आपकी सामग्री तैयार है! 🎉",
+        "ai_image_caption": "एआई-जेनरेटेड छवि",
+        "user_image_caption": "अपलोड की गई छवि",
+        "story_header": "📜 कहानी",
+        "social_header": "📱 सोशल मीडिया पोस्ट",
+        "caption_suggestion": "कैप्शन सुझाव:",
+        "hashtags": "हैशटैग:",
+        "tweet_suggestion": "ट्वीट सुझाव:",
+        "trends_results_header": "📈 बाजार रुझान अंतर्दृष्टि",
+        "trends_ready": "आपकी ट्रेंड रिपोर्ट तैयार है!",
+        "planner_results_header": "🚀 आपकी सोशल मीडिया विकास योजना",
+        "planner_ready": "आपकी विकास योजना तैयार है!",
+        "info_box": "होमपेज पर एक रचनात्मक मार्ग चुनें, अपना इनपुट प्रदान करें, और जेनरेट बटन पर क्लिक करें। साइडबार से आप किसी भी समय पथ बदल सकते हैं।",
+        "clear_button": "परिणाम साफ़ करें",
         "other_option": "अन्य (कृपया निर्दिष्ट करें)",
         "other_specify": "कृपया निर्दिष्ट करें:",
-        "clear_button": "परिणाम साफ़ करें",
-        "generate_button": "मार्केटिंग किट बनाएं",
+        "choose_path_header": "अपना रचनात्मक मार्ग चुनें:",
+        "path_option_1": "मार्केटिंग किट बनाएं",
+        "path_option_2": "बाजार के रुझान खोजें",
+        "path_option_3": "विकास योजना बनाएं",
+        "path_option_4": "कार्यक्रम और कैलेंडर",
+        "start_prompt": "शुरू करने के लिए एक पथ चुनें",
+        "landing_info": "आप कभी भी साइडबार से इस पथ को बदल सकते हैं।",
+        "back_to_home": "वापस होम पर जाएं",
+        "desc_heading": "विवरण (वैकल्पिक)",
+        # Calendar Translations
         "events_header": "📅 कारीगर कार्यक्रम और सूचनाएं",
         "event_preferences_header": "कार्यक्रम प्राथमिकताएं",
         "event_preferences_info": "उन शिल्पों को चुनें जिनमें आपकी रुचि है - सूचनाएं इन टैग से मेल खाएंगी।",
@@ -145,32 +212,92 @@ translations = {
         "no_upcoming_events": "अगले {days} दिनों में कोई मेल खाने वाला कार्यक्रम नहीं है।",
         "event_when": "{days} दिन में",
         "event_when_ago": "{days} दिन पहले",
+        "event_venue_label": "स्थान:",
         "set_reminder_button": "रिमाइंडर सेट करें",
         "cancel_reminder_button": "रिमाइंडर रद्द करें",
-        "reminder_set_success": "रिमाइंडर सेट हो गया।",
-        "reminder_cancelled_success": "रिमाइंडर रद्द किया गया।",
+        "reminder_set_success": "रिमाइंडर सेट हो गया। (यह एक सिमुलेशन है और वास्तविक सूचना नहीं भेजेगा)।",
+        "reminder_cancelled_success": "रिमाइंडर रद्द कर दिया गया।",
         "calendar_header": "कैलेंडर",
         "events_list_header": "कार्यक्रम सूची और विवरण",
         "event_dates_label": "तिथियां:",
         "event_tags_label": "टैग:",
         "starts_in_caption": "{days} दिन में शुरू होगा",
         "started_ago_caption": "कार्यक्रम {days} दिन पहले शुरू हुआ",
-        "active_reminder_warning": "रिमाइंडर: '{title}' {days} दिन में {date} को शुरू होगा। स्थान: {venue} — {city}",
-        "event_done": "कार्यक्रम समाप्त",
-        "event_ongoing": "कार्यक्रम चालू",
         "ended_ago_caption": "कार्यक्रम {days} दिन पहले समाप्त हुआ",
+        "active_reminder_warning": "रिमाइंडर: '{title}' {days} दिन में {date} को शुरू होगा। स्थान: {venue} — {city}",
+        "no_active_reminders": "आपकी अनुस्मारक विंडो के भीतर कोई सक्रिय अनुस्मारक नहीं है।",
+        "event_concluded": "कार्यक्रम समाप्त",
+        "calendar_year_label": "वर्ष",
+        "calendar_month_label": "महीना",
+        # Field Labels
         "field_label_title": "शीर्षक",
         "field_label_materials": "सामग्री",
-        "field_label_region": "क्षेत्र",
-        "field_label_tone": "शैली / टोन"
+        "field_label_region": "क्षेत्र / शहर",
+        "field_label_tone": "शैली / टोन",
+        # Event Status Messages
+        "event_done": "कार्यक्रम समाप्त",
+        "event_ongoing": "कार्यक्रम चालू",
     }
 }
 
-# --- 2. CACHED HELPERS ---
-@st.cache_data
-def t(key, lang="English"):
-    return translations.get(lang, translations["English"]).get(key, key)
+# Ensure all translation keys exist and avoid raw key names showing in UI.
+# Also replace the cached translator with a safer fallback mechanism.
 
+ALL_REQUIRED_KEYS = [
+    "app_title","app_subheader","controls_header","page_language_label","page_language_help",
+    "caption_language_label","caption_language_help","workflow_label","workflow_option_1",
+    "workflow_option_2","workflow_option_3","workflow_option_4","generate_kit_subheader",
+    "image_source_label","source_option_1","source_option_2","prompt_subheader",
+    "prompt_placeholder_title","prompt_placeholder_materials","prompt_placeholder_region",
+    "prompt_placeholder_tone","prompt_placeholder_description","generate_button",
+    "prompt_warning","upload_image_subheader","image_uploader_label","image_uploader_help",
+    "upload_warning","trends_subheader","trends_language_label","trends_label",
+    "trends_placeholder","trends_button","trends_warning","planner_subheader",
+    "plan_language_label","planner_platform_label","planner_platform_placeholder",
+    "planner_craft_label","planner_craft_placeholder","planner_audience_label","planner_audience_placeholder",
+    "planner_button","planner_warning","spinner_text_content","spinner_text_image",
+    "spinner_text_trends","spinner_text_planner","results_header","content_ready",
+    "ai_image_caption","user_image_caption","story_header","social_header",
+    "caption_suggestion","hashtags","tweet_suggestion","trends_results_header",
+    "trends_ready","planner_results_header","planner_ready","info_box","clear_button",
+    "other_option","other_specify","choose_path_header","path_option_1","path_option_2",
+    "path_option_3","path_option_4","start_prompt","landing_info","back_to_home",
+    "desc_heading","events_header","event_preferences_header","event_preferences_info",
+    "select_crafts_label","notify_days_label","upcoming_events_info","no_upcoming_events",
+    "event_when","event_when_ago","event_venue_label","set_reminder_button",
+    "cancel_reminder_button","reminder_set_success","reminder_cancelled_success",
+    "calendar_header","events_list_header","event_dates_label","event_tags_label",
+    "starts_in_caption","started_ago_caption","ended_ago_caption","active_reminder_warning",
+    "no_active_reminders","event_concluded","calendar_year_label","calendar_month_label",
+    "field_label_title","field_label_materials","field_label_region","field_label_tone",
+    "event_done","event_ongoing"
+]
+
+# Fill any missing Hindi keys with English fallback (prevents raw key display)
+for k in ALL_REQUIRED_KEYS:
+    if k not in translations["Hindi"]:
+        translations["Hindi"][k] = translations["English"].get(k, k)
+
+# ---- FIX TRANSLATION FALLBACKS (replace the two t() definitions with this single one) ----
+# Ensure every required key exists in Hindi (and any future languages) by copying from English.
+for _k in ALL_REQUIRED_KEYS:
+    if _k not in translations["Hindi"] or not translations["Hindi"][_k]:
+        translations["Hindi"][_k] = translations["English"].get(_k, _k)
+
+def t(key: str, lang: str = "English") -> str:
+    """
+    Unified translation lookup with robust fallback:
+    1. If key exists in target language and non-empty -> return it
+    2. Else if exists in English -> return English
+    3. Else return the raw key (should not happen if ALL_REQUIRED_KEYS maintained)
+    """
+    lang_map = translations.get(lang, translations["English"])
+    val = lang_map.get(key)
+    if val:
+        return val
+    return translations["English"].get(key, key)
+
+# --- 2. CACHED HELPERS ---
 @st.cache_resource
 def get_gemini_model():
     return genai.GenerativeModel('gemini-1.5-pro-latest')
@@ -479,6 +606,27 @@ pottery_theme_css = """
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+    .event-bar a {
+        color:#fff;
+        text-decoration:none;
+        display:block;
+        width:100%;
+    }
+    .event-bar a:hover { text-decoration:underline; }
+    /* Optional highlight style when jumping */
+    .focused-event-row {
+        border-left:4px solid var(--accent-color);
+        background:#FFF8ED;
+        padding-left:6px;
+    }
+
+    .event-bar-start { border-top-right-radius:0; border-bottom-right-radius:0; }
+    .event-bar-middle { border-radius:0; }
+    .event-bar-end { border-top-left-radius:0; border-bottom-left-radius:0; }
+
+    /* Remove legacy container style that pushed content over the date */
+    .calendar-event-container { margin-top:0; background:transparent; padding:0; box-shadow:none; }
 </style>
 """
 st.markdown(pottery_theme_css, unsafe_allow_html=True)
@@ -552,6 +700,188 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ...existing code below...
+
+# ...some existing code above (place this CSS after your main theme CSS blocks, before WORKFLOW 4)...
+st.markdown("""
+<style>
+/* Reminder button color states (works for English & Hindi labels) */
+form.reminder-form input[type=submit][value="Set Reminder"],
+form.reminder-form input[type=submit][value="रिमाइंडर सेट करें"] {
+    background:#2563EB !important;
+    border:none !important;
+    color:#fff !important;
+}
+form.reminder-form input[type=submit][value="Cancel Reminder"],
+form.reminder-form input[type=submit][value="रिमाइंडर रद्द करें"] {
+    background:#B91C1C !important;
+    border:none !important;
+    color:#fff !important;
+}
+form.reminder-form input[type=submit] {
+    width:100%;
+    padding:10px 14px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    box-shadow:0 2px 4px rgba(0,0,0,0.15);
+}
+form.reminder-form input[type=submit]:hover {
+    filter:brightness(1.08);
+}
+</style>
+""", unsafe_allow_html=True)
+# ...existing code...
+
+# ...replace the existing reminder button CSS block (black/grey one) with this brown/grey version...
+st.markdown("""
+<style>
+/* Reminder buttons: Set = brown, Cancel = grey */
+
+/* SET REMINDER (English & Hindi) */
+form[id^="rem_"] input[type=submit][value="Set Reminder"],
+form[id^="sum_rem_"] input[type=submit][value="Set Reminder"],
+form[id^="rem_"] input[type=submit][value="रिमाइंडर सेट करें"],
+form[id^="sum_rem_"] input[type=submit][value="रिमाइंडर सेट करें"] {
+    background:#5D4037 !important;  /* brown */
+    border:none !important;
+    color:#FFFFFF !important;
+}
+
+/* CANCEL REMINDER (English & Hindi) */
+form[id^="rem_"] input[type=submit][value="Cancel Reminder"],
+form[id^="sum_rem_"] input[type=submit][value="Cancel Reminder"],
+form[id^="rem_"] input[type=submit][value="रिमाइंडर रद्द करें"],
+form[id^="sum_rem_"] input[type=submit][value="रिमाइंडर रद्द करें"] {
+    background:#6B7280 !important;  /* grey */
+    border:none !important;
+    color:#FFFFFF !important;
+}
+
+/* Base styling */
+form[id^="rem_"] input[type=submit],
+form[id^="sum_rem_"] input[type=submit] {
+    width:100%;
+    padding:10px 14px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    box-shadow:0 2px 4px rgba(0,0,0,0.15);
+    font-size:14px;
+    transition:filter .15s ease, transform .15s ease;
+}
+
+form[id^="rem_"] input[type=submit]:hover,
+form[id^="sum_rem_"] input[type=submit]:hover {
+    filter:brightness(1.08);
+}
+
+form[id^="rem_"] input[type=submit]:active,
+form[id^="sum_rem_"] input[type=submit]:active {
+    transform:scale(.97);
+}
+</style>
+""", unsafe_allow_html=True)
+# ...existing code...
+
+# ...append AFTER existing reminder button CSS block (this overrides previous hover behaviors)...
+
+st.markdown("""
+<style>
+/* --- Override hover behaviors as requested --- */
+
+/* 1. Disable hover effects for 'Event Done' (disabled) buttons */
+.stButton > button:disabled,
+.stButton > button:disabled:hover,
+.stButton > button[disabled]:hover {
+    transform: none !important;
+    filter: none !important;
+    pointer-events: none !important;
+}
+
+/* 2. Reminder buttons:
+      - Default already: Set = brown (#5D4037), Cancel = grey (#6B7280)
+      - On hover: Set Reminder turns grey (while keeping brown default when not hovered)
+      - Cancel Reminder keeps the same grey (no color shift)
+*/
+
+/* Remove old brightness hover for reminder forms */
+form[id^="rem_"] input[type=submit]:hover,
+form[id^="sum_rem_"] input[type=submit]:hover {
+    filter: none !important;
+    transform: none !important;
+}
+
+/* Set Reminder (English & Hindi) hover -> grey */
+form[id^="rem_"] input[type=submit][value="Set Reminder"]:hover,
+form[id^="sum_rem_"] input[type=submit][value="Set Reminder"]:hover,
+form[id^="rem_"] input[type=submit][value="रिमाइंडर सेट करें"]:hover,
+form[id^="sum_rem_"] input[type=submit][value="रिमाइंडर सेट करें"]:hover {
+    background: #6B7280 !important;
+    color: #FFFFFF !important;
+}
+
+/* Cancel Reminder hover stays same grey (explicitly fix) */
+form[id^="rem_"] input[type=submit][value="Cancel Reminder"]:hover,
+form[id^="sum_rem_"] input[type=submit][value="Cancel Reminder"]:hover,
+form[id^="rem_"] input[type=submit][value="रिमाइंडर रद्द करें"]:hover,
+form[id^="sum_rem_"] input[type=submit][value="रिमाइंडर रद्द करें"]:hover {
+    background: #6B7280 !important;
+    color: #FFFFFF !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ...append AFTER the existing reminder button CSS blocks (final override)...
+st.markdown("""
+<style>
+/* Remove padding specifically for Set Reminder buttons (English & Hindi) */
+form[id^="rem_"] input[type=submit][value="Set Reminder"],
+form[id^="sum_rem_"] input[type=submit][value="Set Reminder"],
+form[id^="rem_"] input[type=submit][value="रिमाइंडर सेट करें"],
+form[id^="sum_rem_"] input[type=submit][value="रिमाइंडर सेट करें"] {
+    padding: 0 !important;
+    line-height: 1.25rem !important;
+    min-height: 30px !important;
+}
+
+/* Keep Cancel Reminder padding as-is (explicit to avoid inheritance) */
+form[id^="rem_"] input[type=submit][value="Cancel Reminder"],
+form[id^="sum_rem_"] input[type=submit][value="Cancel Reminder"],
+form[id^="rem_"] input[type=submit][value="रिमाइंडर रद्द करें"],
+form[id^="sum_rem_"] input[type=submit][value="रिमाइंडर रद्द करें"] {
+    padding: 10px 14px !important;
+}
+</style>
+""", unsafe_allow_html=True)
+# ...existing code...
+
+st.markdown("""
+<style>
+/* Ensure 'Choose platforms for your plan' multiselect uses white background like other inputs */
+div[data-testid="stMultiSelect"] div[data-baseweb="select"] > div {
+    background:#FFFFFF !important;
+    color:#000000 !important;
+    border:1px solid #CCC !important;
+    border-radius:6px !important;
+}
+div[data-testid="stMultiSelect"] div[data-baseweb="popover"] {
+    background:#FFFFFF !important;
+    color:#000000 !important;
+    border:1px solid #DDD !important;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08) !important;
+}
+div[data-testid="stMultiSelect"] div[data-baseweb="option"] {
+    background:#FFFFFF !important;
+    color:#000000 !important;
+}
+div[data-testid="stMultiSelect"] div[data-baseweb="option"]:hover {
+    background:#F3F4F6 !important;
+}
+div[data-testid="stMultiSelect"] input {
+    color:#000000 !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # --- 4. AI & AUTHENTICATION CONFIG ---
 try:
@@ -696,7 +1026,25 @@ if 'market_trends' not in st.session_state: st.session_state.market_trends = Non
 if 'growth_plan' not in st.session_state: st.session_state.growth_plan = None
 if 'story_is_ready' not in st.session_state: st.session_state.story_is_ready = False
 if 'current_prompt_fields' not in st.session_state: st.session_state.current_prompt_fields = {}
-if 'selected_workflow' not in st.session_state: st.session_state.selected_workflow = None
+if 'selected_workflow_key' not in st.session_state:
+    # Migration: map any legacy localized label to a stable key
+    legacy_label = st.session_state.get('selected_workflow')
+    key_map = {
+        "workflow_option_1": "generate_kit",
+        "workflow_option_2": "discover_trends",
+        "workflow_option_3": "growth_plan",
+        "workflow_option_4": "events_calendar"
+    }
+    mapped = None
+    if legacy_label:
+        # Try both English & Hindi (extend if more UI languages added)
+        for trans_lang in ["English","Hindi"]:
+            for opt_key, stable in key_map.items():
+                if translations[trans_lang].get(opt_key) == legacy_label:
+                    mapped = stable
+                    break
+            if mapped: break
+    st.session_state.selected_workflow_key = mapped  # stays None if none selected
 if 'calendar_year' not in st.session_state: st.session_state.calendar_year = date(2025,9,12).year
 if 'calendar_month' not in st.session_state: st.session_state.calendar_month = date(2025,9,12).month
 if 'reminder_days' not in st.session_state: st.session_state.reminder_days = 14
@@ -777,27 +1125,40 @@ def show_main_app():
             on_change=on_lang_change
         )
 
-        workflow_options = [
-            t('workflow_option_1', page_language),
-            t('workflow_option_2', page_language),
-            t('workflow_option_3', page_language),
-            t('workflow_option_4', page_language)
-        ]
-        def on_sidebar_workflow_change():
-            st.session_state.selected_workflow = st.session_state.sidebar_workflow
-        sidebar_index = 0
-        if st.session_state.selected_workflow in workflow_options:
-            try:
-                sidebar_index = workflow_options.index(st.session_state.selected_workflow)
-            except Exception:
-                sidebar_index = 0
+        # --- Stable workflow keys & translation mapping ---
+        WORKFLOW_KEY_TO_TRANS_KEY = {
+            "generate_kit": "workflow_option_1",
+            "discover_trends": "workflow_option_2",
+            "growth_plan": "workflow_option_3",
+            "events_calendar": "workflow_option_4"
+        }
+        ORDERED_WORKFLOWS = ["generate_kit","discover_trends","growth_plan","events_calendar"]
+
+        # Build localized labels list
+        localized_labels = [t(WORKFLOW_KEY_TO_TRANS_KEY[k], page_language) for k in ORDERED_WORKFLOWS]
+
+        # Determine current index (fallback 0)
+        try:
+            current_idx = ORDERED_WORKFLOWS.index(st.session_state.selected_workflow_key) \
+                if st.session_state.selected_workflow_key else 0
+        except ValueError:
+            current_idx = 0
+
+        def on_workflow_change():
+            chosen_label = st.session_state.sidebar_workflow_label
+            for k in ORDERED_WORKFLOWS:
+                if chosen_label == t(WORKFLOW_KEY_TO_TRANS_KEY[k], page_language):
+                    st.session_state.selected_workflow_key = k
+                    break
+
         st.radio(
             t('workflow_label', page_language),
-            workflow_options,
-            index=sidebar_index,
-            key='sidebar_workflow',
-            on_change=on_sidebar_workflow_change
+            localized_labels,
+            index=current_idx,
+            key='sidebar_workflow_label',
+            on_change=on_workflow_change
         )
+
         st.markdown("---")
         if st.button(t('clear_button', page_language), on_click=clear_results, use_container_width=True):
             st.rerun()
@@ -806,14 +1167,58 @@ def show_main_app():
         st.header(t('event_preferences_header', page_language))
         st.markdown(t('event_preferences_info', page_language))
 
-        all_tags = sorted({tag for ev in st.session_state['events'] for tag in ev['craft_tags']})
-        uid = st.session_state['user']['uid']
+        # --- Craft Tag Localization (Event Preferences) ---
+        all_tags_canonical = sorted({tag for ev in st.session_state['events'] for tag in ev['craft_tags']})
 
-        selected_crafts = st.multiselect(
-            t('select_crafts_label', page_language),
-            all_tags,
-            default=st.session_state['user'].get('preferred_crafts', [])
-        )
+        craft_tag_map_hi = {
+            "Terracotta clay": "टेराकोटा मिट्टी",
+            "Ceramics": "सिरेमिक",
+            "Pottery": "मिट्टी कला",
+            "Brass": "पीतल",
+            "Wood": "लकड़ी",
+            "Stone": "पत्थर",
+            "Leather": "चमड़ा",
+            "Glass": "कांच",
+            "Paper": "कागज",
+            "Bamboo": "बांस",
+            "Fabric": "वस्त्र",
+            "Silk": "रेशम",
+            "Weaving": "बुनाई",
+            "Embroidery": "कढ़ाई",
+            "Bandhani": "बांधनी",
+            "Wool": "ऊन",
+            "Painting": "पेंटिंग",
+            "Art": "कला",
+            "Metals": "धातु",
+            "Brass": "पीतल",
+            "Carving": "नक्काशी",
+            "Toys": "खिलौने",
+            "All": "सभी",
+            "Policy": "नीति",
+            "Market": "बाज़ार",
+            "National": "राष्ट्रीय",
+            "Festive": "उत्सव"
+        }
+
+        if page_language == "Hindi":
+            display_tags = [craft_tag_map_hi.get(tag, tag) for tag in all_tags_canonical]
+            current_pref_display = [craft_tag_map_hi.get(tag, tag)
+                                    for tag in st.session_state['user'].get('preferred_crafts', [])]
+            selection_display = st.multiselect(
+                t('select_crafts_label', page_language),
+                display_tags,
+                default=current_pref_display
+            )
+            # Map back to canonical English for logic/storage
+            inverse_map = {v: k for k, v in craft_tag_map_hi.items()}
+            selected_crafts = [inverse_map.get(d, d) for d in selection_display]
+        else:
+            selected_crafts = st.multiselect(
+                t('select_crafts_label', page_language),
+                all_tags_canonical,
+                default=st.session_state['user'].get('preferred_crafts', [])
+            )
+
         if selected_crafts != st.session_state['user'].get('preferred_crafts', []):
             st.session_state['user']['preferred_crafts'] = selected_crafts
             data_to_save = {
@@ -828,25 +1233,58 @@ def show_main_app():
             min_value=1, max_value=90, value=st.session_state.reminder_days
         )
 
-    if not st.session_state.selected_workflow:
+    if st.session_state.selected_workflow_key is None:
         st.markdown("### " + t('choose_path_header', page_language))
         st.info(t('landing_info', page_language))
         c1, c2 = st.columns(2)
         with c1:
             if st.button(t('path_option_1', page_language), use_container_width=True):
-                st.session_state.selected_workflow = t('workflow_option_1', page_language); st.rerun()
+                st.session_state.selected_workflow_key = "generate_kit"; st.rerun()
             if st.button(t('path_option_3', page_language), use_container_width=True):
-                st.session_state.selected_workflow = t('workflow_option_3', page_language); st.rerun()
+                st.session_state.selected_workflow_key = "growth_plan"; st.rerun()
         with c2:
             if st.button(t('path_option_2', page_language), use_container_width=True):
-                st.session_state.selected_workflow = t('workflow_option_2', page_language); st.rerun()
+                st.session_state.selected_workflow_key = "discover_trends"; st.rerun()
             if st.button(t('path_option_4', page_language), use_container_width=True):
-                st.session_state.selected_workflow = t('workflow_option_4', page_language); st.rerun()
+                st.session_state.selected_workflow_key = "events_calendar"; st.rerun()
         st.markdown("---")
         st.info(t('info_box', page_language))
         return
 
-    workflow = st.session_state.selected_workflow
+    workflow_key = st.session_state.selected_workflow_key
+
+    # Region options (localized)
+    base_regions = [
+        "Jaipur, Rajasthan","Kutch, Gujarat","Madhubani, Bihar","Bishnupur, West Bengal",
+        "Varanasi, Uttar Pradesh","New Delhi / Delhi","Mumbai, Maharashtra","Kolkata, West Bengal",
+        "Chennai, Tamil Nadu","Bengaluru, Karnataka","Hyderabad, Telangana","Pune, Maharashtra",
+        "Ahmedabad, Gujarat","Surat, Gujarat","Lucknow, Uttar Pradesh","Srinagar, Jammu & Kashmir",
+    ]
+    region_map_hi = {
+        "Jaipur, Rajasthan": "जयपुर, राजस्थान",
+        "Kutch, Gujarat": "कच्छ, गुजरात",
+        "Madhubani, Bihar": "मधुबनी, बिहार",
+        "Bishnupur, West Bengal": "बिष्णुपुर, पश्चिम बंगाल",
+        "Varanasi, Uttar Pradesh": "वाराणसी, उत्तर प्रदेश",
+        "New Delhi / Delhi": "नई दिल्ली / दिल्ली",
+        "Mumbai, Maharashtra": "मुंबई, महाराष्ट्र",
+        "Kolkata, West Bengal": "कोलकाता, पश्चिम बंगाल",
+        "Chennai, Tamil Nadu": "चेन्नई, तमिलनाडु",
+        "Bengaluru, Karnataka": "बेंगलुरु, कर्नाटक",
+        "Hyderabad, Telangana": "हैदराबाद, तेलंगाना",
+        "Pune, Maharashtra": "पुणे, महाराष्ट्र",
+        "Ahmedabad, Gujarat": "अहमदाबाद, गुजरात",
+        "Surat, Gujarat": "सूरत, गुजरात",
+        "Lucknow, Uttar Pradesh": "लखनऊ, उत्तर प्रदेश",
+        "Srinagar, Jammu & Kashmir": "श्रीनगर, जम्मू और कश्मीर",
+    }
+    if page_language == "Hindi":
+        region_options_display = [region_map_hi[r] for r in base_regions] + [t('other_option', page_language)]
+        # reverse map for lookup if needed later
+        region_reverse_map = {region_map_hi[k]: k for k in region_map_hi}
+    else:
+        region_options_display = base_regions + [t('other_option', page_language)]
+        region_reverse_map = {}
 
     EXTENDED_REGION_OPTIONS = [
         "Jaipur, Rajasthan","Kutch, Gujarat","Madhubani, Bihar","Bishnupur, West Bengal",
@@ -857,7 +1295,7 @@ def show_main_app():
     ]
 
     # WORKFLOW 1
-    if workflow == t('workflow_option_1', page_language):
+    if workflow_key == "generate_kit":
         caption_language = st.sidebar.selectbox(
             t('caption_language_label', page_language),
             ["English","Hindi","Hinglish","Bengali","Tamil","Gujarati","Marathi"],
@@ -873,24 +1311,105 @@ def show_main_app():
         prompt_fields = {}
         if source_choice == t('source_option_1', page_language):
             st.markdown("#### " + t('prompt_subheader', page_language))
-            prompt_fields['title'] = st.text_input("Title", placeholder=t('prompt_placeholder_title', page_language), key='ai_title')
-            material_options = ["Terracotta clay","Brass","Wood","Ceramics","Stone","Leather","Glass","Paper","Bamboo", t('other_option', page_language)]
-            selected_material = st.selectbox("Materials", material_options, key='ai_materials')
+
+            # --- Title (translated label) ---
+            prompt_fields['title'] = st.text_input(
+                t('field_label_title', page_language),
+                placeholder=t('prompt_placeholder_title', page_language),
+                key='ai_title'
+            )
+
+            # --- Materials (translated label & option localization for Hindi) ---
+            base_material_options = [
+                "Terracotta clay","Brass","Wood","Ceramics","Stone",
+                "Leather","Glass","Paper","Bamboo"
+            ]
+            if page_language == "Hindi":
+                material_map_hi = {
+                    "Terracotta clay": "टेराकोटा मिट्टी",
+                    "Brass": "पीतल",
+                    "Wood": "लकड़ी",
+                    "Ceramics": "सिरेमिक",
+                    "Stone": "पत्थर",
+                    "Leather": "चमड़ा",
+                    "Glass": "कांच",
+                    "Paper": "कागज",
+                    "Bamboo": "बांस"
+                }
+                material_options = [material_map_hi.get(m, m) for m in base_material_options]
+            else:
+                material_options = base_material_options
+            material_options.append(t('other_option', page_language))
+
+            selected_material = st.selectbox(
+                t('field_label_materials', page_language),
+                material_options,
+                key='ai_materials'
+            )
             if selected_material == t('other_option', page_language):
-                prompt_fields['materials'] = st.text_input(t('other_specify', page_language), placeholder=t('prompt_placeholder_materials', page_language), key='ai_materials_other')
+                prompt_fields['materials'] = st.text_input(
+                    t('other_specify', page_language),
+                    placeholder=t('prompt_placeholder_materials', page_language),
+                    key='ai_materials_other'
+                )
             else:
                 prompt_fields['materials'] = selected_material
-            selected_region = st.selectbox("Region", EXTENDED_REGION_OPTIONS, key='ai_region')
-            if selected_region == t('other_option', page_language):
-                prompt_fields['region'] = st.text_input(t('other_specify', page_language), placeholder=t('prompt_placeholder_region', page_language), key='ai_region_other')
+
+            # --- Region (translated label + localized names) ---
+            selected_region_display = st.selectbox(
+                t('field_label_region', page_language),
+                region_options_display,
+                key='ai_region'
+            )
+            if selected_region_display == t('other_option', page_language):
+                prompt_fields['region'] = st.text_input(
+                    t('other_specify', page_language),
+                    placeholder=t('prompt_placeholder_region', page_language),
+                    key='ai_region_other'
+                )
             else:
-                prompt_fields['region'] = selected_region
-            prompt_fields['tone'] = st.selectbox("Tone", ["rustic","festive","modern","cultural","elegant","minimalist", t('other_option', page_language)], key='ai_tone')
-            if prompt_fields['tone'] == t('other_option', page_language):
-                prompt_fields['tone'] = st.text_input(t('other_specify', page_language), placeholder=t('prompt_placeholder_tone', page_language), key='ai_tone_other')
+                # store canonical English if Hindi selected (for consistent AI prompt), else the same
+                if page_language == "Hindi":
+                    prompt_fields['region'] = region_reverse_map.get(selected_region_display, selected_region_display)
+                else:
+                    prompt_fields['region'] = selected_region_display
+
+            # --- Tone (translated label & option localization for Hindi) ---
+            base_tone_options = ["rustic","festive","modern","cultural","elegant","minimalist"]
+            if page_language == "Hindi":
+                tone_map_hi = {
+                    "rustic": "देहाती",
+                    "festive": "उत्सवपूर्ण",
+                    "modern": "आधुनिक",
+                    "cultural": "सांस्कृतिक",
+                    "elegant": "सौम्य",
+                    "minimalist": "सरल"
+                }
+                tone_options = [tone_map_hi.get(tn, tn) for tn in base_tone_options]
+            else:
+                tone_options = base_tone_options
+            tone_options.append(t('other_option', page_language))
+
+            selected_tone = st.selectbox(
+                t('field_label_tone', page_language),
+                tone_options,
+                key='ai_tone'
+            )
+            if selected_tone == t('other_option', page_language):
+                prompt_fields['tone'] = st.text_input(
+                    t('other_specify', page_language),
+                    placeholder=t('prompt_placeholder_tone', page_language),
+                    key='ai_tone_other'
+                )
+            else:
+                prompt_fields['tone'] = selected_tone
         else:
             st.markdown("#### " + t('upload_image_subheader', page_language))
-            uploaded_file = st.file_uploader(t('image_uploader_label', page_language), type=["png","jpg","jpeg"], help=t('image_uploader_help', page_language))
+            uploaded_file = st.file_uploader(
+                t('image_uploader_label', page_language),
+                type=["png","jpg","jpeg"],
+                help=t('image_uploader_help', page_language)
+            )
             if uploaded_file:
                 st.session_state.uploaded_image = uploaded_file
                 st.image(uploaded_file, caption=t('user_image_caption', page_language), use_container_width=True)
@@ -937,11 +1456,15 @@ def show_main_app():
                     st.warning(t('upload_warning', page_language))
 
     # WORKFLOW 2
-    elif workflow == t('workflow_option_2', page_language):
+    elif workflow_key == "discover_trends":
         st.subheader(t('trends_subheader', page_language))
         content_language_list = ["English","Hindi","Hinglish","Bengali","Tamil","Gujarati","Marathi"]
         trends_language = st.selectbox(t('trends_language_label', page_language), content_language_list, key='trends_lang')
-        trends_region = st.text_input("Region", placeholder=t('prompt_placeholder_region', page_language), key='trends_region')
+        trends_region = st.text_input(
+            t('field_label_region', page_language),
+            placeholder=t('prompt_placeholder_region', page_language),
+            key='trends_region'
+        )
         craft_type = st.text_input(t('trends_label', page_language), placeholder=t('trends_placeholder', page_language))
         if st.button(t('trends_button', page_language), use_container_width=True):
             if craft_type and trends_region:
@@ -952,12 +1475,20 @@ def show_main_app():
                 st.warning(t('trends_warning', page_language))
 
     # WORKFLOW 3
-    elif workflow == t('workflow_option_3', page_language):
+    elif workflow_key == "growth_plan":
         st.subheader(t('planner_subheader', page_language))
         content_language_list = ["English","Hindi","Hinglish","Bengali","Tamil","Gujarati","Marathi"]
         plan_language = st.selectbox(t('plan_language_label', page_language), content_language_list, key='plan_lang')
-        planner_region = st.text_input("Region", placeholder=t('prompt_placeholder_region', page_language), key='planner_region')
-        platforms = st.multiselect(t('planner_platform_label', page_language), ["Instagram","Facebook","X"])
+        planner_region = st.text_input(
+            t('field_label_region', page_language),
+            placeholder=t('prompt_placeholder_region', page_language),
+            key='planner_region'
+        )
+        platforms = st.multiselect(
+            t('planner_platform_label', page_language),
+            ["Instagram","Facebook","X"],
+            placeholder=t('planner_platform_placeholder', page_language)
+        )
         craft_type = st.text_input(t('planner_craft_label', page_language), placeholder=t('planner_craft_placeholder', page_language))
         target_audience = st.text_input(t('planner_audience_label', page_language), placeholder=t('planner_audience_placeholder', page_language))
         if st.button(t('planner_button', page_language), use_container_width=True):
@@ -969,7 +1500,7 @@ def show_main_app():
                 st.warning(t('planner_warning', page_language))
 
     # WORKFLOW 4
-    elif workflow == t('workflow_option_4', page_language):
+    elif workflow_key == "events_calendar":
         st.subheader(t('events_header', page_language))
 
         # --- Reminder & Event Window Logic Updates ---
@@ -1035,17 +1566,20 @@ def show_main_app():
                     st.markdown(f"**{ev['title']}** · {ev['city']} — {status}")
                 with cols[1]:
                     if ev['start_date'] > today_ref:  # only future events toggle reminders
-                        if ev['id'] in reminders_for_user:
-                            if st.button(t('cancel_reminder_button', page_language), key=f"sum_cancel_{ev['id']}", use_container_width=True):
-                                reminders_for_user.remove(ev['id'])
-                                persist_reminders()
-                                st.success(t('reminder_cancelled_success', page_language))
-                                st.rerun()
-                        else:
-                            if st.button(t('set_reminder_button', page_language), key=f"sum_set_{ev['id']}", use_container_width=True, type="primary"):
-                                reminders_for_user.add(ev['id'])
-                                persist_reminders()
-                                st.success(t('reminder_set_success', page_language))
+                        # Use a form so we can apply CSS based on the label (value attribute)
+                        with st.form(f"sum_rem_{ev['id']}", clear_on_submit=False):
+                            is_set = ev['id'] in reminders_for_user
+                            btn_label = t('cancel_reminder_button', page_language) if is_set else t('set_reminder_button', page_language)
+                            submitted = st.form_submit_button(btn_label, use_container_width=True, help="Toggle reminder")
+                            if submitted:
+                                if is_set:
+                                    reminders_for_user.remove(ev['id'])
+                                    persist_reminders()
+                                    st.success(t('reminder_cancelled_success', page_language))
+                                else:
+                                    reminders_for_user.add(ev['id'])
+                                    persist_reminders()
+                                    st.success(t('reminder_set_success', page_language))
                                 st.rerun()
                     else:
                         st.button(t('event_ongoing', page_language), key=f"sum_on_{ev['id']}", disabled=True, use_container_width=True)
@@ -1127,7 +1661,11 @@ def show_main_app():
                                 bar_cls.append("event-bar-end")
                             else:
                                 bar_cls.append("event-bar-middle")
-                        title_html = ev['title'] if start_flag else "&nbsp;"
+                        if start_flag:
+                            # Clickable link jumps down to the detailed event section
+                            title_html = f"<a href='#event-{ev['id']}'>{ev['title']}</a>"
+                        else:
+                            title_html = "&nbsp;"
                         bars_html.append(f"<div class='{' '.join(bar_cls)}'>{title_html}</div>")
 
                     html = f"""
@@ -1156,10 +1694,15 @@ def show_main_app():
             for ev in sorted(visible_events, key=event_sort_key):
                 list_c1, list_c2 = st.columns([3,1])
                 with list_c1:
+                    # Anchor target so calendar click scrolls here
+                    st.markdown(f"<div id='event-{ev['id']}'></div>", unsafe_allow_html=True)
                     st.markdown(f"#### {ev['title']}")
                     st.markdown(f"**{t('event_dates_label', page_language)}** {ev['start_date'].strftime('%b %d, %Y')} - {ev['end_date'].strftime('%b %d, %Y')}")
                     st.markdown(f"**{t('event_venue_label', page_language)}** {ev.get('venue')}, {ev.get('city')}")
-                    st.markdown(f"**{t('event_tags_label', page_language)}** {', '.join(ev.get('craft_tags', []))}")
+                    display_tags = ev.get('craft_tags', [])
+                    if page_language == "Hindi":
+                        display_tags = [craft_tag_map_hi.get(tag, tag) for tag in display_tags]
+                    st.markdown(f"**{t('event_tags_label', page_language)}** {', '.join(display_tags)}")
                     st.write(ev.get('description',''))
 
                     ds = days_until(ev['start_date'])
@@ -1176,23 +1719,26 @@ def show_main_app():
                         st.success(t('event_ongoing', page_language))
 
                 with list_c2:
-                    # Reminder toggles only for future events
+                    is_set = ev['id'] in reminders_for_user
                     if ev['end_date'] < today_ref:
                         st.button(t('event_done', page_language), key=f"done_{ev['id']}", disabled=True, use_container_width=True)
                     elif ev['start_date'] <= today_ref <= ev['end_date']:
                         st.button(t('event_ongoing', page_language), key=f"ongoing_{ev['id']}", disabled=True, use_container_width=True)
                     else:
-                        if ev['id'] in reminders_for_user:
-                            if st.button(t('cancel_reminder_button', page_language), key=f"cancel_{ev['id']}", use_container_width=True):
-                                reminders_for_user.remove(ev['id'])
-                                persist_reminders()
-                                st.success(t('reminder_cancelled_success', page_language))
-                                st.rerun()
-                        else:
-                            if st.button(t('set_reminder_button', page_language), key=f"set_{ev['id']}", use_container_width=True, type="primary"):
-                                reminders_for_user.add(ev['id'])
-                                persist_reminders()
-                                st.success(t('reminder_set_success', page_language))
+                        with st.form(f"rem_{ev['id']}", clear_on_submit=False):
+                            st.markdown("<div style='margin-top:2px'></div>", unsafe_allow_html=True)
+                            btn_label = t('cancel_reminder_button', page_language) if is_set else t('set_reminder_button', page_language)
+                            submitted = st.form_submit_button(btn_label, use_container_width=True, help="Toggle reminder", kwargs={})
+                            # (Streamlit adds no class, we style via value selector in CSS)
+                            if submitted:
+                                if is_set:
+                                    reminders_for_user.remove(ev['id'])
+                                    persist_reminders()
+                                    st.success(t('reminder_cancelled_success', page_language))
+                                else:
+                                    reminders_for_user.add(ev['id'])
+                                    persist_reminders()
+                                    st.success(t('reminder_set_success', page_language))
                                 st.rerun()
                 st.markdown("---")
 
@@ -1233,7 +1779,7 @@ def show_main_app():
     elif st.session_state.get('growth_plan'):
         st.header(t('planner_results_header', page_language))
         st.markdown(st.session_state.growth_plan)
-    elif workflow != t('workflow_option_4', page_language):
+    elif workflow_key != "events_calendar":
         st.info(t('info_box', page_language))
 
 # --- 9. ROUTER ---
