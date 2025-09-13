@@ -298,6 +298,20 @@ def t(key: str, lang: str = "English") -> str:
     return translations["English"].get(key, key)
 
 # --- 2. CACHED HELPERS ---
+@st.cache_data
+def get_image_as_base64(path: str) -> str | None: # <-- DEFINITION MUST BE HERE
+    """Reads an image file and returns its Base64 encoded string."""
+    try:
+        with open(path, "rb") as f:
+            data = f.read()
+        return base64.b64encode(data).decode()
+    except FileNotFoundError:
+        st.error(f"Logo file not found at path: {path}")
+        return None
+@st.cache_data
+def t(key, lang="English"):
+    """Gets the translated text for a given key and language, defaulting to English."""
+    return translations.get(lang, translations["English"]).get(key, key)
 @st.cache_resource
 def get_gemini_model():
     return genai.GenerativeModel('gemini-1.5-pro-latest')
@@ -498,8 +512,18 @@ def clear_results():
 
 # --- 3. PAGE CONFIG & THEME ---
 initial_lang = st.query_params.get("lang", "English")
-st.set_page_config(page_title=t("app_title", initial_lang), page_icon="🏺", layout="wide")
-
+st.set_page_config(
+    page_title=t("app_title", initial_lang),
+    # page_icon="🏺",
+    layout="wide",
+)
+logo_path = "logo.gif" 
+logo_base64 = get_image_as_base64(logo_path)
+if logo_base64:
+    st.markdown(
+        f'<link rel="icon" href="data:image/gif;base64,{logo_base64}" type="image/gif">',
+        unsafe_allow_html=True,
+    )
 login_register_input_css = """
 <style>
 /* Login/Register form input backgrounds to white */
@@ -1051,9 +1075,45 @@ if 'reminder_days' not in st.session_state: st.session_state.reminder_days = 14
 
 # --- 7. LOGIN / REGISTER PAGE ---
 def show_login_page():
-    st.title(f"🏺 {t('app_title','English')}")
+    logo_path = "logo.gif"
+    logo_base64 = get_image_as_base64(logo_path)
+    app_title_text = t('app_title', 'English') 
+
+    if logo_base64:
+        st.markdown(
+            f"""
+            <style>
+                .title-container {{
+                    display: flex;
+                    align-items: center;
+                    gap: 2px !important;
+                }}
+                .title-text {{
+                    font-family: 'serif';
+                    font-weight: 600;
+                    font-size: 4.5rem !important;
+                    color: #5D4037;
+                    margin: 0;
+                    margin-left: 1px !important;
+                    padding-top: 5px;
+                }}
+            </style>
+
+            <div class="title-container">
+                <img src="data:image/gif;base64,{logo_base64}" width="120">
+                <h1 class="title-text">{app_title_text}</h1>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    else:
+        # Fallback in case the logo doesn't load
+        st.title(f"🏺 {app_title_text}")
+
     st.markdown("Please log in or register to continue.")
-    login_tab, register_tab = st.tabs(["Login","Register"])
+    
+    # Ensure this block appears only ONCE
+    login_tab, register_tab = st.tabs(["Login", "Register"])
     with login_tab:
         with st.form("login_form"):
             email = st.text_input("Email")
@@ -1089,11 +1149,47 @@ def show_login_page():
                         st.error(f"Registration failed: {err}")
                 else:
                     st.error("Passwords do not match.")
-
 # --- 8. MAIN APP UI ---
 def show_main_app():
-    page_language = st.query_params.get("lang","English")
-    st.title(f"🏺 {t('app_title', page_language)}")
+    page_language = st.query_params.get("lang", "English")
+
+    logo_path = "logo.gif"
+    logo_base64 = get_image_as_base64(logo_path)
+    app_title_text = t('app_title', page_language) # Get title text
+
+# This block creates a single, stable title element with the logo
+    if logo_base64:
+        st.markdown(
+            f"""
+            <style>
+                .title-container {{
+                    display: flex;
+                    align-items: center;
+                    
+                    gap: 2px !important; /* Adjust the space between logo and text */
+                }}
+                .title-text {{
+                    font-family: 'serif';      /* Matches your app's theme font */
+                    font-weight: 600;
+                    font-size: 4.5rem !important;     /* Matches Streamlit's default h1 size */
+                    color: #5D4037;         /* Matches your app's theme color */
+                    margin: 0;
+                    margin-left: 1px !important;/* <-- AND ADDING THIS INSTEAD */
+                    padding-top: 5px;       /* Fine-tunes vertical alignment */
+                }}
+            </style>
+
+            <div class="title-container">
+                <img src="data:image/gif;base64,{logo_base64}" width="120">
+                <h1 class="title-text">{app_title_text}</h1>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    else:
+        # Fallback in case the logo doesn't load
+        st.title(app_title_text)
+
     st.markdown(t('app_subheader', page_language))
 
     with st.sidebar:
