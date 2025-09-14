@@ -1,5 +1,13 @@
 streamlit
 google-generativeai
-google-cloud-aiplatform
 Pillow
-protobuf
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+vertexai
+streamlit-calendar
+streamlit-authenticator
+PyYAML
+google-cloud-aiplatform
+firebase-admin
