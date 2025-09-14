@@ -625,28 +625,15 @@ Markdown output only.
 
 # --- AUTH HELPER FUNCTIONS ---
 def parse_firebase_error(error_message):
-    """Converts Firebase error messages into user-friendly strings.
-    Enhanced: case-insensitive matching + added USER_DISABLED, TOO_MANY_ATTEMPTS_TRY_LATER, and network/timeout hints.
-    """
-    if not error_message:
-        return "An unexpected error occurred. Please try again later."
-    msg = error_message.upper()
-
-    if "INVALID_LOGIN_CREDENTIALS" in msg:
+    """Converts Firebase error messages into user-friendly strings."""
+    if "INVALID_LOGIN_CREDENTIALS" in error_message:
         return "Invalid email or password. Please try again."
-    if "EMAIL_NOT_FOUND" in msg:
+    if "EMAIL_NOT_FOUND" in error_message:
         return "No account found with this email address."
-    if "INVALID_PASSWORD" in msg:
+    if "INVALID_PASSWORD" in error_message:
         return "Incorrect password. Please try again."
-    if "EMAIL_EXISTS" in msg:
+    if "EMAIL_EXISTS" in error_message:
         return "An account with this email address already exists."
-    if "WEAK_PASSWORD" in msg:
+    if "WEAK_PASSWORD" in error_message:
         return "Password is too weak. It should be at least 6 characters long."
-    if "USER_DISABLED" in msg:
-        return "This account has been disabled. Please contact support."
-    if "TOO_MANY_ATTEMPTS_TRY_LATER" in msg:
-        return "Too many failed attempts. Please try again later."
-    if "NETWORK" in msg or "TIMEOUT" in msg:
-        return "Network issue. Please check your connection and try again."
-
     return "An unexpected error occurred. Please try again later."
