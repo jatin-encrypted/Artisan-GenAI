@@ -11,4 +11,5 @@ streamlit-authenticator
 PyYAML
 google-cloud-aiplatform
 firebase-admin
-Pyrebase4
+pyrebase4
+setuptools
