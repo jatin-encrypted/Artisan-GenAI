@@ -11,3 +11,4 @@ streamlit-authenticator
 PyYAML
 google-cloud-aiplatform
 firebase-admin
+Pyrebase4
