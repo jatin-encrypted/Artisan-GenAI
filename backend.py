@@ -21,7 +21,7 @@ import base64
 # --- TRANSLATIONS & CONFIG ---
 translations = {
     "English": {
-        "app_title": "Artisans AI Studio",
+        "app_title": "Artisan AI Studio",
         "app_subheader": "Your all-in-one tool for content creation, image generation, and growth planning.",
         "controls_header": "Controls",
         "page_language_label": "Page Language",
@@ -96,7 +96,7 @@ translations = {
         "back_to_home": "Back to Home",
         "desc_heading": "Description (Optional)",
         # Calendar Translations
-        "events_header": "📅 Artisans Events & Notifications",
+        "events_header": "📅 Artisan Events & Notifications",
         "event_preferences_header": "Event Preferences",
         "event_preferences_info": "Choose crafts you are interested in — notifications will match these tags.",
         "select_crafts_label": "Select crafts",
@@ -132,7 +132,7 @@ translations = {
         "event_ongoing": "Event Ongoing",
     },
     "Hindi": {
-        "app_title": "Artisans AI Studio",
+        "app_title": "Artisan AI Studio",
         "app_subheader": "कंटेंट निर्माण, छवि निर्माण और विकास योजना के लिए आपका ऑल-इन-वन टूल।",
         "controls_header": "नियंत्रण",
         "page_language_label": "पेज की भाषा",
