@@ -53,16 +53,11 @@ Save them in a folder like `assets/` and update the README image paths, e.g.:
 <img src="assets/dashboard.png" alt="Dashboard Preview" width="600"/>
 
 ## 🚀 Features
-
-🔐 User Authentication with Firebase
-
-🤖 Generative AI Models powered by Google
-
-🖼️ Custom UI with artisan branding
-
-🗓️ Calendar Scheduling for collaboration
-
-🎛️ Streamlit-powered Interface
+**🔐 User Authentication with Firebase**
+**🤖 Generative AI Models powered by Google**
+**🖼️ Custom UI with artisan branding**
+**🗓️ Calendar Scheduling for collaboration**
+**🎛️ Streamlit-powered Interface**
 
 ## 🛠️ Installation
 git clone https://github.com/jatin-encrypted/Artisans-GenAI.git
