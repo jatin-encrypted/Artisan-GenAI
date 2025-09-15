@@ -1,52 +1,52 @@
-🌟 Artisans GenAI
-<p align="center"> <img src="logo.gif" alt="Artisans GenAI Logo" width="200"/> </p>
-🎨 Introduction
+# 🌟 Artisans GenAI  
 
-Artisans GenAI is a Streamlit-based web application that integrates Google Generative AI with Firebase authentication to empower artisans and creators.
+<p align="center">
+  <img src="logo.gif" alt="Artisans GenAI Logo" width="200"/>
+</p>  
 
-It enables authenticated users to:
-✨ Interact with AI models
-✨ Explore generative design ideas
-✨ Manage and schedule creative sessions
+## 🎨 Introduction  
+**Artisans GenAI** is a Streamlit-based web application that integrates **Google Generative AI** with **Firebase authentication** to empower artisans and creators.  
 
-<p align="center"> <img src="background.jpg" alt="Artisans GenAI Background" width="600"/> </p>
-📑 Table of Contents
+It enables authenticated users to:  
+✨ Interact with AI models  
+✨ Explore generative design ideas  
+✨ Manage and schedule creative sessions  
 
-Introduction
+---
 
-Preview
+## 📑 Table of Contents  
+- [Introduction](#-introduction)  
+- [Preview](#-preview)  
+- [Features](#-features)  
+- [Installation](#-installation)  
+- [Usage](#-usage)  
+- [Dependencies](#-dependencies)  
+- [Configuration](#-configuration)  
+- [Examples](#-examples)  
+- [Troubleshooting](#-troubleshooting)  
+- [Contributors](#-contributors)  
+- [License](#-license)  
 
-Features
+---
 
-Installation
+## 👀 Preview  
 
-Usage
+Here’s a sneak peek of the app in action:  
 
-Dependencies
+<p align="center">
+  <img src="logo.gif" alt="Login Page" width="220"/>  
+  <br/>
+  <em>🔐 Login page with Firebase authentication (placeholder)</em>
+</p>  
 
-Configuration
+👉 Once you run `frontend.py`, take **real screenshots** of:  
+- Login page (Firebase Auth in Streamlit)  
+- Main dashboard with AI interaction  
+- Calendar view (`streamlit-calendar`)  
 
-Examples
-
-Troubleshooting
-
-Contributors
-
-License
-
-👀 Preview
-
-Here’s a sneak peek of the app in action:
-
-<p align="center"> <img src="logo.gif" alt="Login Page" width="220"/> <br/> <em>🔐 Login page with Firebase authentication</em> </p> <p align="center"> <img src="background.jpg" alt="Dashboard UI" width="600"/> <br/> <em>🎨 Dashboard with custom background and artisan-friendly UI</em> </p>
-
-👉 Once you run frontend.py, you can add real screenshots of the app’s interface to replace these placeholders. Recommended sections to capture:
-
-Login page (Firebase Auth in Streamlit)
-
-Main dashboard with AI interaction
-
-Calendar view (from streamlit-calendar)
+Save them in a folder like `assets/` and update the README image paths, e.g.:  
+```markdown
+<img src="assets/dashboard.png" alt="Dashboard Preview" width="600"/>
 
 🚀 Features
 
@@ -70,9 +70,6 @@ pip install -r requirements.txt
 💻 Usage
 streamlit run frontend.py
 
-
-App runs on: http://localhost:8501
-
 📦 Dependencies
 
 From requirements.txt:
@@ -91,11 +88,11 @@ Pillow, PyYAML – Utilities
 
 ⚙️ Configuration
 
-Firebase Project Setup
+Firebase Setup – Create project, download Admin SDK JSON, update firebase_auth.py.
 
-Google Cloud APIs Setup
+Google Cloud Setup – Enable Vertex AI + Generative AI APIs.
 
-Add secrets (Firebase key, Google credentials)
+Secrets / Env Vars – Store credentials in .streamlit/secrets.toml or .env.
 
 🧩 Examples
 
@@ -103,7 +100,7 @@ Generate design concepts with AI
 
 Organize artisan workshops with calendar integration
 
-Customize UI branding with background.jpg & logo.gif
+Customize branding with your own logo
 
 🛠️ Troubleshooting
 
@@ -121,3 +118,10 @@ Streamlit errors → Run pip install -r requirements.txt
 📜 License
 
 MIT License – see LICENSE
+
+---
+
+✅ Just paste this into your project’s `README.md`.  
+✅ Since you already uploaded `logo.gif` to the repo, it will display correctly on GitHub.  
+
+Do you want me to also create the **folder structure diagram** (in Markdown) and append it right after the **Introduction**? It’ll help contributors know where to place assets like `logo.gif`, `frontend.py`, etc.
