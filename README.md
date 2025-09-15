@@ -199,17 +199,11 @@ Add automated tests under tests/ (not included yet).
 ---
 
 ## 🖼️ Screenshots
-Place real screenshots in assets/ and update below:
-```
-assets/
-  login.png
-  dashboard.png
-```
-Example embedding:
-```markdown
-![Login](assets/login.png)
-![Dashboard](assets/dashboard.png)
-```
+Below are current UI screenshots (click to open full size):
+
+| Login                                          | Dashboard                                                  |
+| ---------------------------------------------- | ---------------------------------------------------------- |
+| [![Login](assets/login.png)](assets/login.png) | [![Dashboard](assets/dashboard.png)](assets/dashboard.png) |
 
 ---
 
