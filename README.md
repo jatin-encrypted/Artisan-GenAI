@@ -15,17 +15,21 @@ It enables authenticated users to:
 ---
 
 ## 📑 Table of Contents  
-- [Introduction](#-introduction)  
-- [Preview](#-preview)  
-- [Features](#-features)  
-- [Installation](#-installation)  
-- [Usage](#-usage)  
-- [Dependencies](#-dependencies)  
-- [Configuration](#-configuration)  
-- [Examples](#-examples)  
-- [Troubleshooting](#-troubleshooting)  
-- [Contributors](#-contributors)  
-- [License](#-license)  
+- [🌟 Artisans GenAI](#-artisans-genai)
+  - [🎨 Introduction](#-introduction)
+  - [📑 Table of Contents](#-table-of-contents)
+  - [👀 Preview](#-preview)
+  - [🚀 Features](#-features)
+  - [🛠️ Installation](#️-installation)
+  - [💻 Usage](#-usage)
+  - [📦 Dependencies](#-dependencies)
+  - [⚙️ Configuration](#️-configuration)
+  - [🧩 Examples](#-examples)
+  - [🛠️ Troubleshooting](#️-troubleshooting)
+  - [👨‍💻 Contributors](#-contributors)
+  - [@jatin-encrypted](#jatin-encrypted)
+  - [@Tvaibhav06](#tvaibhav06)
+  - [📜 License](#-license)
 
 ---
 
@@ -48,7 +52,7 @@ Save them in a folder like `assets/` and update the README image paths, e.g.:
 ```markdown
 <img src="assets/dashboard.png" alt="Dashboard Preview" width="600"/>
 
-🚀 Features
+## 🚀 Features
 
 🔐 User Authentication with Firebase
 
@@ -60,17 +64,17 @@ Save them in a folder like `assets/` and update the README image paths, e.g.:
 
 🎛️ Streamlit-powered Interface
 
-🛠️ Installation
+## 🛠️ Installation
 git clone https://github.com/jatin-encrypted/Artisans-GenAI.git
 cd Artisans-GenAI
 python -m venv venv
 source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-💻 Usage
+## 💻 Usage
 streamlit run frontend.py
 
-📦 Dependencies
+## 📦 Dependencies
 
 From requirements.txt:
 
@@ -86,7 +90,7 @@ streamlit-calendar – Schedule manager
 
 Pillow, PyYAML – Utilities
 
-⚙️ Configuration
+## ⚙️ Configuration
 
 Firebase Setup – Create project, download Admin SDK JSON, update firebase_auth.py.
 
@@ -94,7 +98,7 @@ Google Cloud Setup – Enable Vertex AI + Generative AI APIs.
 
 Secrets / Env Vars – Store credentials in .streamlit/secrets.toml or .env.
 
-🧩 Examples
+## 🧩 Examples
 
 Generate design concepts with AI
 
@@ -102,7 +106,7 @@ Organize artisan workshops with calendar integration
 
 Customize branding with your own logo
 
-🛠️ Troubleshooting
+## 🛠️ Troubleshooting
 
 Login issues → Check Firebase config
 
@@ -110,18 +114,13 @@ API errors → Ensure Google Cloud APIs are enabled
 
 Streamlit errors → Run pip install -r requirements.txt
 
-👨‍💻 Contributors
+## 👨‍💻 Contributors
 
-@jatin-encrypted
-@Tvaibhav06
+## @jatin-encrypted
+## @Tvaibhav06
 
-📜 License
+## 📜 License  
 
-MIT License – see LICENSE
+This project is licensed under the [MIT License](LICENSE).
 
----
-
-✅ Just paste this into your project’s `README.md`.  
-✅ Since you already uploaded `logo.gif` to the repo, it will display correctly on GitHub.  
-
-Do you want me to also create the **folder structure diagram** (in Markdown) and append it right after the **Introduction**? It’ll help contributors know where to place assets like `logo.gif`, `frontend.py`, etc.
+ 
