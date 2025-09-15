@@ -1,4 +1,6 @@
 # 🌟 Artisans GenAI
+<!-- Live deployment -->
+🔗 Live App: https://artisansai-studios.streamlit.app/
 
 <p align="center">
   <img src="logo.gif" alt="Artisans GenAI Logo" width="200"/>
@@ -164,7 +166,7 @@ VERTEX_LOCATION=us-central1
 ---
 
 ## 💻 Usage
-Run locally:
+Access (deployed): https://artisansai-studios.streamlit.app/
 ```bash
 streamlit run frontend.py
 ```
@@ -202,13 +204,11 @@ Place real screenshots in assets/ and update below:
 assets/
   login.png
   dashboard.png
-  calendar.png
 ```
 Example embedding:
 ```markdown
 ![Login](assets/login.png)
 ![Dashboard](assets/dashboard.png)
-![Calendar](assets/calendar.png)
 ```
 
 ---
@@ -278,7 +278,3 @@ Add shields.io badges once CI / coverage is configured:
 ```
 
 ---
-
-Feel free to replace placeholder text as real assets and modules are implemented. PRs welcome!
-
-
