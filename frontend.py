@@ -906,19 +906,28 @@ def show_main_app():
     # WORKFLOW 2
     elif workflow_key == "discover_trends":
         st.subheader(t('trends_subheader', page_language))
-        content_language_list = ["English","Hindi","Hinglish","Bengali","Tamil","Gujarati","Marathi"]
-        trends_language = st.selectbox(t('trends_language_label', page_language), content_language_list, key='trends_lang')
+        trends_language = st.session_state.caption_language
+
         trends_region = st.text_input(
             t('field_label_region', page_language),
             placeholder=t('prompt_placeholder_region', page_language),
             key='trends_region'
         )
-        craft_type = st.text_input(t('trends_label', page_language), placeholder=t('trends_placeholder', page_language))
+        craft_type = st.text_input(
+            t('trends_label', page_language),
+            placeholder=t('trends_placeholder', page_language)
+        )
         if st.button(t('trends_button', page_language), use_container_width=True):
             if craft_type and trends_region:
                 clear_results()
-                with st.spinner(t('spinner_text_trends', page_language).format(trends_lang=trends_language)):
-                    st.session_state.market_trends = get_market_trends(trends_region, trends_language, craft_type)
+                with st.spinner(
+                    t('spinner_text_trends', page_language).format(trends_lang=trends_language)
+                ):
+                    st.session_state.market_trends = get_market_trends(
+                        trends_region,
+                        trends_language,
+                        craft_type
+                    )
             else:
                 st.warning(t('trends_warning', page_language))
 
