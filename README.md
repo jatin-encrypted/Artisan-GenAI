@@ -1,12 +1,12 @@
 # 🌟 Artisans GenAI
-<!-- Badges -->
+
 <p align="center">
   <img alt="Python" src="https://img.shields.io/badge/Python-3.11%2B-blue">
   <img alt="Streamlit" src="https://img.shields.io/badge/Streamlit-1.x-FF4B4B?logo=streamlit&logoColor=white">
   <a href="#-license"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg"></a>
 </p>
 
-<!-- Live deployment -->
+
 🔗 Live App: https://artisansai-studios.streamlit.app/
 
 <p align="center">
