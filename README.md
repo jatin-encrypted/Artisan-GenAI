@@ -39,7 +39,6 @@ Empowering artisans and creators with AI-assisted ideation, scheduling, and work
   - [🤝 Contributing](#-contributing)
   - [👨‍💻 Contributors](#-contributors)
   - [📜 License](#-license)
-  - [🧾 Badges (Optional Future)](#-badges-optional-future)
 
 ---
 
@@ -279,6 +278,3 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 ---
 
-## 🧾 Badges (Optional Future)
-<!-- Kept for reference; badges added at the top -->
-````
