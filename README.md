@@ -258,10 +258,11 @@ Please keep commits scoped and follow conventional messages where possible.
 ---
 
 ## 👨‍💻 Contributors
-- @jatin-encrypted
-- @Tvaibhav06
-
-(Feel free to add yourself via PR.)
+- [@jatin-encrypted](https://github.com/jatin-encrypted)
+- [@Tvaibhav06](https://github.com/Tvaibhav06)
+- [@Advikmangal](https://github.com/Advikmangal)
+- [@Tanishka290305](https://github.com/Tanishka290305)
+- [@nakshtra3108](https://github.com/nakshtra3108)
 
 ---
 
@@ -277,4 +278,3 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
-
