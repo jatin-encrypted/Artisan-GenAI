@@ -6,14 +6,13 @@
   <a href="#-license"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg"></a>
 </p>
 
-
 🔗 Live App: https://artisansai-studios.streamlit.app/
 
 <p align="center">
   <img src="logo.gif" alt="Artisans GenAI Logo" width="200"/>
 </p>
 
-Empowering artisans and creators with AI-assisted ideation, scheduling, and workflow tools using Streamlit, Google Generative AI, and Firebase.
+Empowering artisans and creators with AI-assisted ideation, content generation, image generation, and calendar-based reminders using Streamlit, Google Generative AI, Vertex AI, and Firebase.
 
 ---
 
@@ -28,12 +27,10 @@ Empowering artisans and creators with AI-assisted ideation, scheduling, and work
   - [⚙️ Configuration](#️-configuration)
     - [1. Firebase Setup](#1-firebase-setup)
     - [2. Google Generative / Vertex AI](#2-google-generative--vertex-ai)
-    - [3. Streamlit Secrets](#3-streamlit-secrets)
+    - [3. Streamlit Secrets (required)](#3-streamlit-secrets-required)
   - [🔐 Environment Variables / Secrets](#-environment-variables--secrets)
   - [💻 Usage](#-usage)
   - [🧪 Development \& Testing](#-development--testing)
-  - [🖼️ Screenshots](#️-screenshots)
-  - [🧩 Extending (Add Your Own AI Model)](#-extending-add-your-own-ai-model)
   - [🛠️ Troubleshooting](#️-troubleshooting)
   - [🗺️ Roadmap](#️-roadmap)
   - [🤝 Contributing](#-contributing)
@@ -43,33 +40,31 @@ Empowering artisans and creators with AI-assisted ideation, scheduling, and work
 ---
 
 ## 🎨 Introduction
-Artisans GenAI is a Streamlit application that blends conversational AI, creative design prompting, and calendar-based planning. Authenticated users can:
-- Brainstorm product or craft ideas.
-- Generate design narratives or workshop outlines.
-- Schedule collaborative sessions.
+Artisans GenAI blends multilingual UI, AI content generation, optional AI image generation, and an events calendar with reminders. Authenticated users can:
+- Generate stories and social captions from prompts or uploaded images.
+- Discover market trends and create growth plans.
+- Track craft events and set reminders.
 
 ---
 
 ## 🚀 Features
-- 🔐 Firebase-backed user authentication
-- 🤖 Google Generative AI (Gemini / Vertex AI ready)
-- 🗓️ Integrated scheduling (streamlit-calendar)
-- 💬 Prompt → Response conversational UI
-- 🖼️ Asset-ready interface for branding
-- 🔌 Modular services layer for future model providers
-- 🧱 Config-driven secrets & environment isolation
+- 🔐 Firebase-backed email/password auth (Pyrebase)
+- 🤖 Google Generative AI (Gemini 1.5 Pro) for text/JSON output
+- 🖼️ Vertex AI ImageGenerationModel (Imagen) for 1:1 images
+- 🌐 Multilingual UI (English, Hindi; extendable)
+- 📅 Events calendar with reminders and preferences
+- 🎛️ Config-driven via Streamlit secrets
+- 🎨 Themed Streamlit UI with logo/favicon/background support
 
 ---
 
 ## 🏗️ Architecture
-High-level:
-1. Streamlit frontend (session state, auth gating, UI components)
-2. Firebase (Auth + optional Firestore/Realtime DB for persistence)
-3. Google Generative AI / Vertex AI for text (and future multimodal) generation
-4. Calendar component for organizing creative sessions
-
-Data Flow (simplified):
-User → Auth (Firebase) → UI → Prompt Service → Google GenAI → Response rendered → Optional save
+1. frontend.py — Streamlit UI, routing, session state, widgets, calendar, reminders
+2. backend.py — Translations, AI helpers (Gemini/Vertex), events data, auth/bootstrap
+3. firebase_auth.py — Firebase initialization and helpers (sign up, login, save/load user data)
+4. .streamlit/config.toml — Theme
+5. .streamlit/secrets.toml — Secrets (not committed)
+6. requirements.txt — Python dependencies
 
 ---
 
@@ -77,20 +72,16 @@ User → Auth (Firebase) → UI → Prompt Service → Google GenAI → Response
 ```
 artisans_ai/
   frontend.py
+  backend.py
   firebase_auth.py
-  ai/
-    prompts.py
-    providers/
-      google_genai.py
-  assets/
-    logo.gif
-    (add: login.png, dashboard.png, calendar.png)
   .streamlit/
-    secrets.toml (gitignored)
+    config.toml
+    secrets.toml  (gitignored; contains your keys)
   requirements.txt
   README.md
+  logo.gif        (app logo, used in UI)
+  background.jpg  (optional; background image)
 ```
-(Adjust as your actual layout evolves.)
 
 ---
 
@@ -108,141 +99,133 @@ venv\Scripts\Activate.ps1
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
-Optional (editable dev mode):
-```bash
-pip install -e .
-```
 
 ---
 
 ## ⚙️ Configuration
+
 ### 1. Firebase Setup
-1. Create Firebase project
-2. Enable Authentication (Email/Password or others)
-3. (If used) Create Firestore or Realtime Database
-4. Generate Admin SDK private key (Service Account) JSON
-5. Store JSON securely (do NOT commit). Reference path via env/secret.
+1. Create a Firebase project.
+2. Enable Authentication (Email/Password).
+3. Create a Realtime Database (or ensure databaseURL exists in your web config).
+4. From Project Settings → Your apps (Web) copy the Web app config (apiKey, authDomain, databaseURL, etc.).
+5. Paste those values under [firebase_config] in .streamlit/secrets.toml (see Streamlit Secrets below).
 
 ### 2. Google Generative / Vertex AI
-1. Create Google Cloud project
-2. Enable: Vertex AI API + Generative Language API
-3. Create API key (standard) OR set up service account for Vertex
-4. Note: Vertex region (e.g., us-central1) if using advanced models
+1. Create/choose a Google Cloud project.
+2. Enable: Vertex AI API and Generative Language API.
+3. Create a Service Account with Vertex permissions and generate a JSON key.
+4. Put the raw JSON into GCP_SERVICE_ACCOUNT_JSON in .streamlit/secrets.toml.
+5. Also set GEMINI_API_KEY for google-generativeai (used for text).
+6. Vertex region used in code: us-central1.
 
-### 3. Streamlit Secrets
-Preferred approach: .streamlit/secrets.toml
-Example below.
+### 3. Streamlit Secrets (required)
+Create .streamlit/secrets.toml. The keys below match how the code reads them.
+
+```toml
+# Top-level API keys used by backend.py
+GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"
+
+# Provide raw JSON of your service account as a string (backend.py checks 'GCP_SERVICE_ACCOUNT_JSON')
+GCP_SERVICE_ACCOUNT_JSON = """
+{
+  "type": "service_account",
+  "project_id": "your-project-id",
+  "private_key_id": "xxx",
+  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+  "client_email": "service-account@your-project-id.iam.gserviceaccount.com",
+  "client_id": "1234567890",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/service-account%40your-project-id.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
+"""
+
+[firebase_config]
+apiKey = "YOUR_FIREBASE_WEB_API_KEY"
+authDomain = "yourapp.firebaseapp.com"
+databaseURL = "https://yourapp-default-rtdb.firebaseio.com"
+projectId = "yourapp"
+storageBucket = "yourapp.appspot.com"
+messagingSenderId = "1234567890"
+appId = "1:1234567890:web:abc123"
+measurementId = "G-XXXXXXX" # optional
+
+[firebase_database]
+databaseURL = "https://yourapp-default-rtdb.firebaseio.com/"
+```
+
+Notes:
+- Do not commit secrets.toml.
+- backend.py uses GEMINI_API_KEY and GCP_SERVICE_ACCOUNT_JSON.
+- firebase_auth.py expects [firebase_config] for Pyrebase initialization.
 
 ---
 
 ## 🔐 Environment Variables / Secrets
-Choose one strategy:
-A. secrets.toml (recommended for Streamlit)
-B. .env file + python-dotenv (if you add it)
-C. Direct OS environment variables (CI/CD friendly)
-
-Example secrets.toml:
-```toml
-[firebase]
-api_key = "YOUR_FIREBASE_WEB_API_KEY"
-auth_domain = "yourapp.firebaseapp.com"
-project_id = "yourapp"
-storage_bucket = "yourapp.appspot.com"
-messaging_sender_id = "1234567890"
-app_id = "1:1234567890:web:abc123"
-service_account_json = "/absolute/path/to/serviceAccountKey.json"
-
-[google_ai]
-api_key = "GOOGLE_GENERATIVE_AI_API_KEY"
-vertex_project = "gcp-project-id"
-vertex_location = "us-central1"
-
-[app]
-default_model = "gemini-pro"
+Alternative to secrets.toml (if you prefer env vars):
 ```
-
-If using environment variables:
-```
+# Firebase web config (map to your pyrebase config)
 FIREBASE_API_KEY=...
-GOOGLE_GENAI_API_KEY=...
-VERTEX_PROJECT=...
+FIREBASE_AUTH_DOMAIN=yourapp.firebaseapp.com
+FIREBASE_DATABASE_URL=https://yourapp-default-rtdb.firebaseio.com
+FIREBASE_PROJECT_ID=yourapp
+FIREBASE_STORAGE_BUCKET=yourapp.appspot.com
+FIREBASE_MESSAGING_SENDER_ID=1234567890
+FIREBASE_APP_ID=1:1234567890:web:abc123
+
+# Google Generative AI (Gemini) and Vertex
+GEMINI_API_KEY=...
+GCP_SERVICE_ACCOUNT_JSON='{"type":"service_account", ... }'
 VERTEX_LOCATION=us-central1
 ```
+If you use env vars, load them into st.secrets at runtime (or adapt firebase_auth.py to read envs directly).
 
 ---
 
 ## 💻 Usage
-Access (deployed): https://artisansai-studios.streamlit.app/
+Run the Streamlit app:
 ```bash
 streamlit run frontend.py
 ```
 
-If you have multiple secrets profiles:
-```bash
-STREAMLIT_SECRETS_FILE=.streamlit/secrets.toml streamlit run frontend.py
-```
-
 Then:
-1. Open the provided local URL
-2. Log in / Sign up (depending on implemented flow)
-3. Enter prompts in the AI panel
-4. Use calendar to assign sessions or notes
+1. Open the local URL from the terminal.
+2. Register or log in (email/password).
+3. Pick a workflow from the sidebar and generate content or set reminders.
 
 ---
 
 ## 🧪 Development & Testing
-Lint (if you add flake8/ruff):
-```bash
-ruff check .
-```
-Basic manual test checklist:
-- Invalid login rejected
-- Valid login persists session
-- Prompt returns AI response
-- Calendar events render properly
-Add automated tests under tests/ (not included yet).
+Basic checks:
+- Invalid login shows a friendly error.
+- Valid login persists session.
+- “Generate Marketing Kit” returns story/captions JSON rendered in UI.
+- “Discover Market Trends” and “Growth Plan” return markdown.
+- Calendar renders and reminders toggle/save to Realtime DB.
 
----
-
-## 🖼️ Screenshots
-Below are current UI screenshots (click to open full size):
-
-| Login                                          | Dashboard                                                  |
-| ---------------------------------------------- | ---------------------------------------------------------- |
-| [![Login](assets/login.png)](assets/login.png) | [![Dashboard](assets/dashboard.png)](assets/dashboard.png) |
-
----
-
-## 🧩 Extending (Add Your Own AI Model)
-1. Create new provider file under ai/providers/
-2. Expose a generate_text(prompt: str, **kwargs) function
-3. Add a registry entry (e.g., in prompts.py or a providers index)
-4. Update model select UI in frontend.py to include provider key
-
----
-
-## 🛠️ Troubleshooting
-| Issue                       | Check                                |
-| --------------------------- | ------------------------------------ |
-| Firebase auth fails         | API key + authDomain mismatch        |
-| 403 / Quota errors          | Google API enabled? Billing active?  |
-| Streamlit secrets not found | Path .streamlit/secrets.toml exists? |
-| Calendar not loading        | Component version / network console  |
-| Unicode issues              | Ensure UTF-8 environment locale      |
-
-Quick reset:
+Optional rebuild:
 ```bash
 pip install --force-reinstall -r requirements.txt
 ```
 
 ---
 
+## 🛠️ Troubleshooting
+- Auth fails: confirm [firebase_config] matches your Firebase Web config.
+- Vertex/Gemini errors: ensure APIs are enabled and billing is active; verify GEMINI_API_KEY and service account permissions.
+- Secrets not loading: ensure .streamlit/secrets.toml exists and keys match names above.
+- Background/logo missing: app will warn if background.jpg is absent; logo.gif is optional but recommended.
+
+---
+
 ## 🗺️ Roadmap
-- [ ] Persistent chat history (Firestore)
-- [ ] Multi-user shared boards
-- [ ] Image generation integration
-- [ ] Role-based access (e.g., facilitator vs creator)
-- [ ] Export sessions (PDF/Markdown)
+- [ ] Persistent content save/export
+- [ ] More languages
+- [ ] Rich event sources (remote)
+- [ ] Fine-grained role access
 
 ---
 
@@ -252,8 +235,6 @@ pip install --force-reinstall -r requirements.txt
 3. Commit: git commit -m "feat: add your feature"
 4. Push: git push origin feat/your-feature
 5. Open Pull Request
-
-Please keep commits scoped and follow conventional messages where possible.
 
 ---
 
@@ -270,11 +251,3 @@ Please keep commits scoped and follow conventional messages where possible.
 MIT License
 
 Copyright (c) 2025 Artisans GenAI contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
----
