@@ -1,4 +1,3 @@
----
 # 🌟 Artisans GenAI
 
 <p align="center">
@@ -7,15 +6,14 @@
   <a href="#-license"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg"></a>
 </p>
 
-🔗 Live App: https://artisansai-studios.streamlit.app/
+🔗 **Live App:** [https://artisansai-studios.streamlit.app/](https://artisansai-studios.streamlit.app/)
 
 <p align="center">
   <img src="logo.gif" alt="Artisans GenAI Logo" width="200"/>
 </p>
 
-Empowering artisans and creators with AI-assisted ideation, content generation, image generation, and calendar-based reminders using Streamlit, Google Generative AI, Vertex AI, and Firebase.
+Empowering artisans and creators with AI-assisted ideation, content generation, image creation, and calendar-based reminders — built with **Streamlit**, **Firebase**, **Vertex AI**, and **Google Generative AI (Gemini 2.5 Flash)**.
 
----
 
 ## 📑 Table of Contents
 - [🌟 Artisans GenAI](#-artisans-genai)
