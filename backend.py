@@ -308,7 +308,7 @@ def get_image_as_base64(file):
 
 @st.cache_resource
 def get_gemini_model():
-    return genai.GenerativeModel('gemini-1.5-pro-latest')
+    return genai.GenerativeModel('models/gemini-2.5-flash')
 
 @st.cache_resource
 def get_imagen_model():
@@ -565,7 +565,7 @@ Schema:
     return None
 
 def get_ai_content_from_image(uploaded_image, caption_language, description):
-    model = genai.GenerativeModel('gemini-1.5-pro-latest')
+    model = genai.GenerativeModel('models/gemini-2.5-flash')
     prompt = f"""
 Analyze the craft image and produce JSON marketing kit in {caption_language}.
 Description: {description}
