@@ -1,6 +1,4 @@
 ---
-
-```md
 # 🌟 Artisans GenAI
 
 <p align="center">
