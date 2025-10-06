@@ -272,7 +272,4 @@ MIT License
 Copyright (c) 2025 Artisans GenAI contributors
 
 ```
-
----
-Would you like me to also **update the description line** (e.g. add “powered by Gemini 2.5 Flash” under the logo)?
 ```
