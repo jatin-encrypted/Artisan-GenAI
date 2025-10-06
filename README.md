@@ -222,10 +222,10 @@ pip install --force-reinstall -r requirements.txt
 ---
 
 ## 🗺️ Roadmap
-- &bull; Persistent content save/export
-- &bull; More languages
-- &bull; Rich event sources (remote)
-- &bull; Fine-grained role access
+ &bull; Persistent content save/export
+ &bull; More languages
+ &bull; Rich event sources (remote)
+ &bull; Fine-grained role access
 
 ---
 
