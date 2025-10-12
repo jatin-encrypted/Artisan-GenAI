@@ -6,15 +6,14 @@
   <a href="#-license"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg"></a>
 </p>
 
-🔗 Live App: https://artisansai-studios.streamlit.app/
+🔗 **Live App:** [https://artisansai-studios.streamlit.app/](https://artisansai-studios.streamlit.app/)
 
 <p align="center">
   <img src="logo.gif" alt="Artisans GenAI Logo" width="200"/>
 </p>
 
-Empowering artisans and creators with AI-assisted ideation, content generation, image generation, and calendar-based reminders using Streamlit, Google Generative AI, Vertex AI, and Firebase.
+Empowering artisans and creators with AI-assisted ideation, content generation, image creation, and calendar-based reminders — built with **Streamlit**, **Firebase**, **Vertex AI**, and **Google Generative AI (Gemini 2.5 Flash)**.
 
----
 
 ## 📑 Table of Contents
 - [🌟 Artisans GenAI](#-artisans-genai)
@@ -49,7 +48,7 @@ Artisans GenAI blends multilingual UI, AI content generation, optional AI image 
 
 ## 🚀 Features
 - 🔐 Firebase-backed email/password auth (Pyrebase)
-- 🤖 Google Generative AI (Gemini 1.5 Pro) for text/JSON output
+- 🤖 Google Generative AI (Gemini 2.5 Flash) for text/JSON output
 - 🖼️ Vertex AI ImageGenerationModel (Imagen) for 1:1 images
 - 🌐 Multilingual UI (English, Hindi; extendable)
 - 📅 Events calendar with reminders and preferences
@@ -70,18 +69,20 @@ Artisans GenAI blends multilingual UI, AI content generation, optional AI image 
 
 ## 🗂️ Project Structure
 ```
+
 artisans_ai/
-  frontend.py
-  backend.py
-  firebase_auth.py
-  .streamlit/
-    config.toml
-    secrets.toml  (gitignored; contains your keys)
-  requirements.txt
-  README.md
-  logo.gif        (app logo, used in UI)
-  background.jpg  (optional; background image)
-```
+frontend.py
+backend.py
+firebase_auth.py
+.streamlit/
+config.toml
+secrets.toml  (gitignored; contains your keys)
+requirements.txt
+README.md
+logo.gif        (app logo, used in UI)
+background.jpg  (optional; background image)
+
+````
 
 ---
 
@@ -98,13 +99,14 @@ venv\Scripts\Activate.ps1
 
 pip install --upgrade pip
 pip install -r requirements.txt
-```
+````
 
 ---
 
 ## ⚙️ Configuration
 
 ### 1. Firebase Setup
+
 1. Create a Firebase project.
 2. Enable Authentication (Email/Password).
 3. Create a Realtime Database (or ensure databaseURL exists in your web config).
@@ -112,6 +114,7 @@ pip install -r requirements.txt
 5. Paste those values under [firebase_config] in .streamlit/secrets.toml (see Streamlit Secrets below).
 
 ### 2. Google Generative / Vertex AI
+
 1. Create/choose a Google Cloud project.
 2. Enable: Vertex AI API and Generative Language API.
 3. Create a Service Account with Vertex permissions and generate a JSON key.
@@ -120,6 +123,7 @@ pip install -r requirements.txt
 6. Vertex region used in code: us-central1.
 
 ### 3. Streamlit Secrets (required)
+
 Create .streamlit/secrets.toml. The keys below match how the code reads them.
 
 ```toml
@@ -158,14 +162,17 @@ databaseURL = "https://yourapp-default-rtdb.firebaseio.com/"
 ```
 
 Notes:
-- Do not commit secrets.toml.
-- backend.py uses GEMINI_API_KEY and GCP_SERVICE_ACCOUNT_JSON.
-- firebase_auth.py expects [firebase_config] for Pyrebase initialization.
+
+* Do not commit secrets.toml.
+* backend.py uses GEMINI_API_KEY and GCP_SERVICE_ACCOUNT_JSON.
+* firebase_auth.py expects [firebase_config] for Pyrebase initialization.
 
 ---
 
 ## 🔐 Environment Variables / Secrets
+
 Alternative to secrets.toml (if you prefer env vars):
+
 ```
 # Firebase web config (map to your pyrebase config)
 FIREBASE_API_KEY=...
@@ -181,17 +188,21 @@ GEMINI_API_KEY=...
 GCP_SERVICE_ACCOUNT_JSON='{"type":"service_account", ... }'
 VERTEX_LOCATION=us-central1
 ```
+
 If you use env vars, load them into st.secrets at runtime (or adapt firebase_auth.py to read envs directly).
 
 ---
 
 ## 💻 Usage
+
 Run the Streamlit app:
+
 ```bash
 streamlit run frontend.py
 ```
 
 Then:
+
 1. Open the local URL from the terminal.
 2. Register or log in (email/password).
 3. Pick a workflow from the sidebar and generate content or set reminders.
@@ -199,14 +210,17 @@ Then:
 ---
 
 ## 🧪 Development & Testing
+
 Basic checks:
-- Invalid login shows a friendly error.
-- Valid login persists session.
-- “Generate Marketing Kit” returns story/captions JSON rendered in UI.
-- “Discover Market Trends” and “Growth Plan” return markdown.
-- Calendar renders and reminders toggle/save to Realtime DB.
+
+* Invalid login shows a friendly error.
+* Valid login persists session.
+* “Generate Marketing Kit” returns story/captions JSON rendered in UI.
+* “Discover Market Trends” and “Growth Plan” return markdown.
+* Calendar renders and reminders toggle/save to Realtime DB.
 
 Optional rebuild:
+
 ```bash
 pip install --force-reinstall -r requirements.txt
 ```
@@ -214,22 +228,25 @@ pip install --force-reinstall -r requirements.txt
 ---
 
 ## 🛠️ Troubleshooting
-- Auth fails: confirm [firebase_config] matches your Firebase Web config.
-- Vertex/Gemini errors: ensure APIs are enabled and billing is active; verify GEMINI_API_KEY and service account permissions.
-- Secrets not loading: ensure .streamlit/secrets.toml exists and keys match names above.
-- Background/logo missing: app will warn if background.jpg is absent; logo.gif is optional but recommended.
+
+* Auth fails: confirm [firebase_config] matches your Firebase Web config.
+* Vertex/Gemini errors: ensure APIs are enabled and billing is active; verify GEMINI_API_KEY and service account permissions.
+* Secrets not loading: ensure .streamlit/secrets.toml exists and keys match names above.
+* Background/logo missing: app will warn if background.jpg is absent; logo.gif is optional but recommended.
 
 ---
 
 ## 🗺️ Roadmap
- - Persistent content save/export
- - More languages
- - Rich event sources (remote)
- - Fine-grained role access
+
+* Persistent content save/export
+* More languages
+* Rich event sources (remote)
+* Fine-grained role access
 
 ---
 
 ## 🤝 Contributing
+
 1. Fork repository
 2. Create feature branch: git checkout -b feat/your-feature
 3. Commit: git commit -m "feat: add your feature"
@@ -239,15 +256,20 @@ pip install --force-reinstall -r requirements.txt
 ---
 
 ## 👨‍💻 Contributors
-- [@jatin-encrypted](https://github.com/jatin-encrypted)
-- [@Tvaibhav06](https://github.com/Tvaibhav06)
-- [@Advikmangal](https://github.com/Advikmangal)
-- [@Tanishka290305](https://github.com/Tanishka290305)
-- [@nakshtra3108](https://github.com/nakshtra3108)
+
+* [@jatin-encrypted](https://github.com/jatin-encrypted)
+* [@Tvaibhav06](https://github.com/Tvaibhav06)
+* [@Advikmangal](https://github.com/Advikmangal)
+* [@Tanishka290305](https://github.com/Tanishka290305)
+* [@nakshtra3108](https://github.com/nakshtra3108)
 
 ---
 
 ## 📜 License
+
 MIT License
 
 Copyright (c) 2025 Artisans GenAI contributors
+
+```
+```
