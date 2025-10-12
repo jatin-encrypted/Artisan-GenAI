@@ -78,3 +78,56 @@ def load_user_data(db, uid: str, token: str = None) -> Dict[str, Any]:
     except Exception as e:
         st.error(f"Database Error: Failed to load user data. {e}")
         return {}
+    
+def refresh_token(auth, refresh_token: str):
+    """Refreshes an expired Firebase auth token.
+    
+    Args:
+        auth: Firebase auth instance
+        refresh_token: The refresh token from a previous login
+        
+    Returns:
+        Tuple of (refreshed_user_info, error_message)
+    """
+    try:
+        user = auth.refresh(refresh_token)
+        return user, None
+    except Exception as e:
+        try:
+            error_json = e.args[1]
+            error_message = json.loads(error_json)['error']['message']
+        except (IndexError, KeyError, json.JSONDecodeError):
+            error_message = str(e)
+        return None, error_message
+
+def verify_token(auth, id_token: str):
+    """Verifies if a Firebase ID token is still valid.
+    
+    Args:
+        auth: Firebase auth instance
+        id_token: The ID token to verify
+        
+    Returns:
+        Tuple of (user_info, error_message)
+    """
+    try:
+        # Get account info using the token
+        account_info = auth.get_account_info(id_token)
+        if account_info and 'users' in account_info and len(account_info['users']) > 0:
+            user_data = account_info['users'][0]
+            # Reconstruct user info similar to login response
+            user_info = {
+                'localId': user_data.get('localId'),
+                'email': user_data.get('email'),
+                'idToken': id_token,
+                'refreshToken': None  # We don't get refresh token from account info
+            }
+            return user_info, None
+        return None, "Invalid token"
+    except Exception as e:
+        try:
+            error_json = e.args[1]
+            error_message = json.loads(error_json)['error']['message']
+        except (IndexError, KeyError, json.JSONDecodeError):
+            error_message = str(e)
+        return None, error_message

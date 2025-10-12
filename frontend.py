@@ -403,6 +403,67 @@ if 'calendar_year' not in st.session_state: st.session_state.calendar_year = dat
 if 'calendar_month' not in st.session_state: st.session_state.calendar_month = date(2025,9,12).month
 if 'reminder_days' not in st.session_state: st.session_state.reminder_days = 14
 
+# --- SESSION PERSISTENCE: Restore session on page refresh ---
+if 'session_restored' not in st.session_state:
+    st.session_state.session_restored = False
+
+if not st.session_state.session_restored:
+    # Try to restore session from query params (persisted login)
+    stored_token = st.query_params.get("token")
+    stored_refresh = st.query_params.get("refresh")
+    stored_uid = st.query_params.get("uid")
+    stored_email = st.query_params.get("email")
+    
+    if stored_token and stored_uid and stored_email:
+        try:
+            # Verify the stored token is still valid
+            user_info, err = firebase_auth.verify_token(auth_handler, stored_token)
+            
+            if user_info and not err:
+                # Token is valid, restore the session
+                st.session_state.logged_in = True
+                st.session_state.user_info = user_info
+                
+                # Load user data from database
+                data = firebase_auth.load_user_data(db_handler, stored_uid, token=stored_token)
+                st.session_state['user'] = {
+                    'uid': stored_uid,
+                    'email': stored_email,
+                    'preferred_crafts': data.get('preferred_crafts', [])
+                }
+                st.session_state['reminders'] = {stored_uid: data.get('reminders', [])}
+                
+            elif stored_refresh:
+                # Token expired, try to refresh
+                refreshed_user, refresh_err = firebase_auth.refresh_token(auth_handler, stored_refresh)
+                
+                if refreshed_user and not refresh_err:
+                    # Successfully refreshed, update session
+                    st.session_state.logged_in = True
+                    st.session_state.user_info = refreshed_user
+                    
+                    # Update query params with new token
+                    st.query_params.update({
+                        "token": refreshed_user.get('idToken'),
+                        "refresh": refreshed_user.get('refreshToken', stored_refresh),
+                        "uid": stored_uid,
+                        "email": stored_email
+                    })
+                    
+                    # Load user data
+                    data = firebase_auth.load_user_data(db_handler, stored_uid, token=refreshed_user.get('idToken'))
+                    st.session_state['user'] = {
+                        'uid': stored_uid,
+                        'email': stored_email,
+                        'preferred_crafts': data.get('preferred_crafts', [])
+                    }
+                    st.session_state['reminders'] = {stored_uid: data.get('reminders', [])}
+        except Exception as e:
+            # Session restoration failed, clear query params
+            st.query_params.clear()
+    
+    st.session_state.session_restored = True
+
 # --- LOGIN / REGISTER PAGE ---
 def show_login_page():
     # --- VISUAL CONTAINER STYLE ---
@@ -461,6 +522,13 @@ def show_login_page():
                         data = firebase_auth.load_user_data(db_handler, user['localId'], token=user.get('idToken'))
                         st.session_state['user'] = {'uid': user['localId'], 'email': user['email'], 'preferred_crafts': data.get('preferred_crafts', [])}
                         st.session_state['reminders'] = { user['localId']: data.get('reminders', []) }
+                        # Persist session in query params for page refresh
+                        st.query_params.update({
+                            "token": user.get('idToken'),
+                            "refresh": user.get('refreshToken'),
+                            "uid": user['localId'],
+                            "email": user['email']
+                        })
                         st.rerun()
                     else:
                         st.error(parse_firebase_error(err))
