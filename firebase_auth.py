@@ -38,19 +38,42 @@ def login(auth, email, password):
             error_message = str(e)
         return None, error_message
 
-def save_user_data(db, uid: str, data: Dict[str, Any]):
-    """Saves user data (preferences, reminders) to the Realtime Database."""
+def save_user_data(db, uid: str, data: Dict[str, Any], token: str = None):
+    """Saves user data (preferences, reminders) to the Realtime Database.
+    
+    Args:
+        db: Firebase database instance
+        uid: User ID
+        data: Data to save
+        token: Firebase auth token (idToken) - required for authenticated access
+    """
     try:
-        db.child("users").child(uid).set(data)
+        if token:
+            # Use token for authenticated access
+            db.child("users").child(uid).set(data, token=token)
+        else:
+            # Fallback without token (may fail if rules require auth)
+            db.child("users").child(uid).set(data)
         return True
     except Exception as e:
         st.error(f"Database Error: Failed to save user data. {e}")
         return False
 
-def load_user_data(db, uid: str) -> Dict[str, Any]:
-    """Loads user data from the Realtime Database."""
+def load_user_data(db, uid: str, token: str = None) -> Dict[str, Any]:
+    """Loads user data from the Realtime Database.
+    
+    Args:
+        db: Firebase database instance
+        uid: User ID
+        token: Firebase auth token (idToken) - required for authenticated access
+    """
     try:
-        data = db.child("users").child(uid).get().val()
+        if token:
+            # Use token for authenticated access
+            data = db.child("users").child(uid).get(token=token).val()
+        else:
+            # Fallback without token (may fail if rules require auth)
+            data = db.child("users").child(uid).get().val()
         return data if data else {}
     except Exception as e:
         st.error(f"Database Error: Failed to load user data. {e}")

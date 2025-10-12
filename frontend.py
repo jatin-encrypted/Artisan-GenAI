@@ -457,7 +457,8 @@ def show_login_page():
                     if user:
                         st.session_state.logged_in = True
                         st.session_state.user_info = user
-                        data = firebase_auth.load_user_data(db_handler, user['localId'])
+                        # Pass the idToken for authenticated database access
+                        data = firebase_auth.load_user_data(db_handler, user['localId'], token=user.get('idToken'))
                         st.session_state['user'] = {'uid': user['localId'], 'email': user['email'], 'preferred_crafts': data.get('preferred_crafts', [])}
                         st.session_state['reminders'] = { user['localId']: data.get('reminders', []) }
                         st.rerun()
@@ -661,7 +662,9 @@ def show_main_app():
                 'preferred_crafts': selected_crafts,
                 'reminders': st.session_state['reminders'].get(uid, [])
             }
-            firebase_auth.save_user_data(db_handler, uid, data_to_save)
+            # Pass the idToken for authenticated database access
+            token = st.session_state.user_info.get('idToken') if st.session_state.user_info else None
+            firebase_auth.save_user_data(db_handler, uid, data_to_save, token=token)
             st.toast("Preferences saved!")
 
         st.session_state.reminder_days = st.number_input(
@@ -996,13 +999,16 @@ def show_main_app():
 
         def persist_reminders():
             st.session_state['reminders'][uid] = list(reminders_for_user)
+            # Pass the idToken for authenticated database access
+            token = st.session_state.user_info.get('idToken') if st.session_state.user_info else None
             firebase_auth.save_user_data(
                 db_handler,
                 uid,
                 {
                     'preferred_crafts': st.session_state['user'].get('preferred_crafts', []),
                     'reminders': st.session_state['reminders'][uid]
-                }
+                },
+                token=token
             )
 
         # --- Summary / Quick Reminder Toggle Section ---
