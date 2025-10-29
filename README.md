@@ -62,7 +62,7 @@ Artisans GenAI blends multilingual UI, AI content generation, optional AI image 
 2. backend.py — Translations, AI helpers (Gemini/Vertex), events data, auth/bootstrap
 3. firebase_auth.py — Firebase initialization and helpers (sign up, login, save/load user data)
 4. .streamlit/config.toml — Theme
-5. .streamlit/secrets.toml — Secrets (not committed)
+5. .streamlit/secrets.toml — Secrets
 6. requirements.txt — Python dependencies
 
 ---
